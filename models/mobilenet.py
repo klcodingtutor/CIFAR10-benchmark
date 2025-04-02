@@ -1,7 +1,11 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_mobilenet(model_name='mobilenet_v2', num_classes=10, pretrained=False, transfer_learning=False):
+def get_mobilenet(model_name, num_classes, pretrained, transfer_learning):
+    """
+    Example:
+        get_mobilenet(model_name='mobilenet_v2', num_classes=10, pretrained=False, transfer_learning=False):
+    """
     if model_name == 'mobilenet_v2':
         model = models.mobilenet_v2(pretrained=pretrained)
     else:

@@ -1,7 +1,11 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_resnet(model_name='resnet18', num_classes=10, pretrained=False, transfer_learning=False):
+def get_resnet(model_name, num_classes, pretrained, transfer_learning):
+    """
+    Example:
+        get_resnet(model_name='resnet18', num_classes=10, pretrained=False, transfer_learning=False):
+    """
     # Dictionary mapping model names to torchvision model functions
     resnet_models = {
         'resnet18': models.resnet18,

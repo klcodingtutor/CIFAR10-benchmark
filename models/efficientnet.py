@@ -1,7 +1,12 @@
 from efficientnet_pytorch import EfficientNet
 import torch.nn as nn
 
-def get_efficientnet(model_name='efficientnet-b0', num_classes=10, pretrained=False, transfer_learning=False):
+def get_efficientnet(model_name, num_classes, pretrained, transfer_learning):
+    """
+    Example:
+        get_efficientnet(model_name='efficientnet-b0', num_classes=10, pretrained=False, transfer_learning=False):
+    
+    """
     if pretrained:
         model = EfficientNet.from_pretrained(model_name)
     else:
