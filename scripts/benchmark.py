@@ -1,5 +1,6 @@
 import argparse
 import torch
+from models import *
 from data.dataloaders import get_cifar10_dataloaders
 from trainers.evaluator import Evaluator
 from utils.config import load_config

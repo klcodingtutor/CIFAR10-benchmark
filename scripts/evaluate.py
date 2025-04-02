@@ -1,7 +1,7 @@
 import argparse
 import torch
+from models import *
 from data.dataloaders import get_cifar10_dataloaders
-from models import get_resnet, get_efficientnet  # Add other imports as needed
 from trainers.evaluator import Evaluator
 
 def main():
