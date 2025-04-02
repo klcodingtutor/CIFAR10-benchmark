@@ -22,10 +22,7 @@ def main():
 
     # Setup data
     if config['dataset'] == 'cifar10':
-        train_loader, val_loader, _ = get_cifar10_dataloaders(
-            batch_size=config['batch_size'],
-            partial_ratio=config.get('partial_ratio', 0.1)
-        )
+        train_loader, val_loader, _ = get_cifar10_dataloaders()
     elif config['dataset'] == 'face':
         if 'task' not in config:
             raise ValueError("Task must be specified for face dataset")
