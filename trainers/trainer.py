@@ -62,7 +62,7 @@ class Trainer:
                 if not os.path.exists('checkpoints'):
                     os.makedirs('checkpoints')
                 if self.save_suffix is not None:
-                    torch.save(self.model.state_dict(), f'checkpoints/{self.config["model"]}_{self.save_suffix}_best.pth')
+                    torch.save(self.model.state_dict(), f'checkpoints/{self.config["model"]}_{save_suffix}_best.pth')
                 else:
                     torch.save(self.model.state_dict(), f'checkpoints/{self.config["model"]}_best.pth')
     

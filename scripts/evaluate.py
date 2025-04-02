@@ -1,7 +1,7 @@
 import argparse
 import torch
 from data import get_cifar10_dataloaders, get_face_dataloaders
-from models import *  # Import all model functions
+from models import model_mapping
 from trainers.evaluator import Evaluator
 from utils.config import load_config
 
@@ -36,10 +36,10 @@ def main():
 
     # Setup model
     if args.transfer_learning:
-        model_func = globals()[f'get_{args.model.replace("-", "_")}_transfer_learning']
+        model_func = model_mapping[f'get_{args.model.replace("-", "_")}_transfer_learning']
         print("Using transfer learning model!")
     else:
-        model_func = globals()[f'get_{args.model.replace("-", "_")}']
+        model_func = model_mapping[f'get_{args.model.replace("-", "_")}']
         print("Using standard model!")
     
     # Determine number of classes

@@ -1,6 +1,7 @@
+# Not Ready yet
 import argparse
 import torch
-from models import *
+from models import model_mapping
 from data.dataloaders import get_cifar10_dataloaders
 from trainers.evaluator import Evaluator
 from utils.config import load_config
@@ -19,7 +20,7 @@ def main():
     # Benchmark
     results = {}
     for model_name, checkpoint in zip(args.models, args.checkpoints):
-        model = globals()[f'get_{model_name.split("-")[0]}'](model_name=model_name)
+        model = model_mapping[model_name]()
         model.load_state_dict(torch.load(checkpoint))
         evaluator = Evaluator(model, test_loader)
         acc = evaluator.evaluate()

@@ -1,6 +1,6 @@
 import argparse
 from data import get_cifar10_dataloaders, get_face_dataloaders
-from models import *  # Import all model functions
+from models import model_mapping
 from trainers.trainer import Trainer
 from utils.config import load_config
 from utils.logging import setup_logger
@@ -37,10 +37,10 @@ def main():
 
     # Setup model and logger
     if args.transfer_learning:
-        model_func = globals()[f'get_{args.model.replace("-", "_")}_transfer_learning']
+        model_func = model_mapping[f'get_{args.model.replace("-", "_")}_transfer_learning']
         print("Used transfer learning!")
     else:
-        model_func = globals()[f'get_{args.model.replace("-", "_")}']
+        model_func = model_mapping[f'get_{args.model.replace("-", "_")}']
         print("Used standard model!")
     model = model_func(model_name=args.model, num_classes=10 if config['dataset'] == 'cifar10' else len(train_loader.dataset.label_to_idx))
     # print out model
