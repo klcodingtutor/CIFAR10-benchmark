@@ -5,6 +5,8 @@ from .densenet import get_densenet
 from .mobilenet import get_mobilenet
 from .vit import get_vit
 from .swin import get_swin
+from .convnext import get_convnext
+from .efficientnetv2 import get_efficientnetv2
 from utils.decorator import print_args
 
 @print_args
@@ -65,6 +67,22 @@ def get_model(model_name, model_family, pretrained, num_classes, transfer_learni
             num_classes=num_classes,
             transfer_learning=transfer_learning
         )
+    elif model_family == 'convnext':
+        model = get_convnext(
+            model_name=model_name,
+            model_family=model_family,
+            pretrained=pretrained,
+            num_classes=num_classes,
+            transfer_learning=transfer_learning
+        )
+    elif model_family == 'efficientnetv2':
+        model = get_efficientnetv2(
+            model_name=model_name,
+            model_family=model_family,
+            pretrained=pretrained,
+            num_classes=num_classes,
+            transfer_learning=transfer_learning
+        )
     else:
         raise ValueError(f"Unsupported model family: {model_family}")
 
@@ -87,4 +105,8 @@ if __name__ == "__main__":
     model = get_model('vit_b_16', 'vit', pretrained=True, num_classes=10, transfer_learning=True)
     print(model)
     model = get_model('swin_t', 'swin', pretrained=True, num_classes=10, transfer_learning=True)
+    print(model)
+    model = get_model('convnext_tiny', 'convnext', pretrained=True, num_classes=10, transfer_learning=True)
+    print(model)
+    model = get_model('efficientnet_v2_s', 'efficientnetv2', pretrained=True, num_classes=10, transfer_learning=True)
     print(model)
