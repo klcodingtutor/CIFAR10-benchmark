@@ -2,7 +2,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
+from ..utils.decorator import print_args
 
+@print_args
 def train_epoch(model, trainloader, valloader, criterion, optimizer, device):
     """Train the model for one epoch and evaluate on validation set."""
     # Training phase
@@ -50,6 +52,7 @@ def train_epoch(model, trainloader, valloader, criterion, optimizer, device):
     
     return train_loss, train_acc, val_loss, val_acc
 
+@print_args
 def evaluate(model, testloader, criterion, device):
     """Evaluate the model on the test set."""
     model.eval()
@@ -72,6 +75,7 @@ def evaluate(model, testloader, criterion, device):
     test_acc = 100. * correct / total
     return test_loss, test_acc
 
+@print_args
 def save_checkpoint(model, config, filepath):
     """Save the model checkpoint."""
     torch.save({
@@ -80,6 +84,7 @@ def save_checkpoint(model, config, filepath):
     }, filepath)
     print(f"Model saved to {filepath}")
 
+@print_args
 def load_checkpoint(model, filepath, device):
     """Load a model checkpoint and return the model."""
     checkpoint = torch.load(filepath, map_location=device)
