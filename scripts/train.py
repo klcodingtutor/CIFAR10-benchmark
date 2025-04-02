@@ -15,7 +15,12 @@ def main():
 
     # Setup data, model, and logger
     train_loader, val_loader, _ = get_cifar10_dataloaders(batch_size=config['batch_size'])
-    model = globals()[f'get_{config["model"].split("-")[0]}'](model_name=config["model"])
+
+    if "resnet" in config["model"].lower():
+        model = globals()[f'get_resnet'](model_name=config["model"])
+    else:
+        model = globals()[f'get_resnet'](model_name=config["model"])
+
     logger, writer = setup_logger()
 
     # Train
