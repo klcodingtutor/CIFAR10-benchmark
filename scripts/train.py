@@ -49,7 +49,7 @@ def main():
 
     save_suffix = config['task']
     # Train
-    trainer = Trainer(model, train_loader, val_loader, config, logger, writer, save_suffix)
+    trainer = Trainer(model, train_loader, val_loader, config, logger, writer, save_suffix=save_suffix)
     trainer.train()
     writer.close()
 
