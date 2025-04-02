@@ -1,7 +1,7 @@
 model: simple_cnn
-epochs: 50
+epochs: 10
 batch_size: 128
-optimizer: sgd
-lr: 0.01
+optimizer: adam
+lr: 0.001
 momentum: 0.9
 scheduler: null
