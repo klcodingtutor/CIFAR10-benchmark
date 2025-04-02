@@ -1,6 +1,6 @@
 from .resnet import get_resnet
 from .efficientnet import get_efficientnet
-from ..utils.decorator import print_args
+from utils.decorator import print_args
 
 @print_args
 def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):

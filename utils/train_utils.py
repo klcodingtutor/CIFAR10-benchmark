@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
-from ..utils.decorator import print_args
+from utils.decorator import print_args
 
 @print_args
 def train_epoch(model, trainloader, valloader, criterion, optimizer, device):
@@ -94,8 +94,8 @@ def load_checkpoint(model, filepath, device):
 
 if __name__ == "__main__":
     # Simple test (requires other modules)
-    from ..dataloaders.cifar10_loader import get_cifar10_dataloaders
-    from ..models import get_model
+    from dataloaders.cifar10_loader import get_cifar10_dataloaders
+    from models import get_model
     
     config = {'batch_size': 64, 'model': 'resnet18', 'model_family': 'resnet', 'pretrained': True}
     trainloader, valloader, testloader = get_cifar10_dataloaders(config['batch_size'])
