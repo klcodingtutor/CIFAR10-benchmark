@@ -6,6 +6,7 @@ from utils.config import load_config
 from utils.train_utils import train_epoch, evaluate, save_checkpoint
 from dataloaders.cifar10_loader import get_cifar10_dataloaders
 from models import get_model
+import json
 
 def main():
     # Parse command-line arguments
@@ -51,7 +52,9 @@ def main():
     # -----------------------------------------------------------------------------------
     # TODO:
     best_acc = 0.0
+    best_acc_epoch = -1
     best_acc_val = 0.0
+    best_acc_val_epoch = -1
     # -----------------------------------------------------------------------------------
     for epoch in range(config['epochs']):
         print(f"\nEpoch {epoch+1}/{config['epochs']}")
@@ -70,6 +73,21 @@ def main():
             best_acc = test_acc
             filepath = f"{config['model']}_{config['dataset']}_{config['task']}_best.pth"
             save_checkpoint(model, config, filepath)
+            best_acc_epoch = epoch + 1
+            
+            # Save epoch information to a JSON file
+            info_filepath = f"{config['model']}_{config['dataset']}_{config['task']}_best.json"
+            epoch_info = {
+                "epoch": epoch + 1,
+                "train_loss": train_loss,
+                "train_acc": train_acc,
+                "val_loss": val_loss,
+                "val_acc": val_acc,
+                "test_loss": test_loss,
+                "test_acc": test_acc
+            }
+            with open(info_filepath, "w") as f:
+                json.dump(epoch_info, f, indent=4)
         # -----------------------------------------------------------------------------------
     
         # Save best model based on val
@@ -77,6 +95,21 @@ def main():
             best_acc_val = val_acc
             filepath = f"{config['model']}_{config['dataset']}_{config['task']}_val_best.pth"
             save_checkpoint(model, config, filepath)
+            best_acc_val_epoch = epoch + 1
+
+            # Save epoch information to a JSON file
+            info_filepath = f"{config['model']}_{config['dataset']}_{config['task']}_val_best.json"
+            epoch_info = {
+                "epoch": epoch + 1,
+                "train_loss": train_loss,
+                "train_acc": train_acc,
+                "val_loss": val_loss,
+                "val_acc": val_acc,
+                "test_loss": test_loss,
+                "test_acc": test_acc
+            }
+            with open(info_filepath, "w") as f:
+                json.dump(epoch_info, f, indent=4)
 
     print(f"Training completed. Best Val Acc: {best_acc:.2f}%")
 
