@@ -1,7 +1,7 @@
 model: swin_t
 model_family: swin
 dataset: face
-task: age_10
+task: disease
 epochs: 1
 batch_size: 64
 optimizer: adam

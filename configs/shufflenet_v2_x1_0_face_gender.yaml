@@ -1,7 +1,7 @@
 model: shufflenet_v2_x1_0
 model_family: shufflenet
 dataset: face
-task: age_10
+task: disease
 epochs: 1
 batch_size: 64
 optimizer: adam

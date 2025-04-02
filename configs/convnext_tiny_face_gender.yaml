@@ -1,7 +1,7 @@
 model: convnext_tiny
 model_family: convnext
 dataset: face
-task: age_10
+task: disease
 epochs: 1
 batch_size: 64
 optimizer: adam

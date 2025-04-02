@@ -1,7 +1,7 @@
 model: vit_b_16
 model_family: vit
 dataset: face
-task: age_10
+task: disease
 epochs: 1
 batch_size: 64
 optimizer: adam
