@@ -12,6 +12,7 @@ def get_cifar10_dataloaders(batch_size, data_dir='./data', val_split=0.1):
     ])
     
     transform_test = transforms.Compose([
+        transforms.Resize((32, 32)),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ])
