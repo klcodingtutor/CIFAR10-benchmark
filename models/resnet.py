@@ -9,6 +9,8 @@ def get_resnet(model_name, model_family, pretrained, num_classes, transfer_learn
         'resnet18': models.resnet18,
         'resnet34': models.resnet34,
         'resnet50': models.resnet50,
+        'resnet101': models.resnet101,
+        'resnet152': models.resnet152,
     }
     model_fn = resnet_dict.get(model_name)
     if not model_fn:
