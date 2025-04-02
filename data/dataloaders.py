@@ -15,6 +15,13 @@ def get_cifar10_dataloaders(data_dir='./data', batch_size=128, val_split=0.1, nu
     train_subset = Subset(train_dataset, train_idx)
     val_subset = Subset(train_dataset, val_idx)
 
+    PARTIAL_RATIO = 0.1 # reduce everything to 10% of the original dataset
+    partial_train_idx = train_idx[:int(PARTIAL_RATIO * len(train_idx))]
+    partial_val_idx = val_idx[:int(PARTIAL_RATIO * len(val_idx))]
+
+    train_subset = Subset(train_dataset, partial_train_idx)
+    val_subset = Subset(train_dataset, partial_val_idx)
+
     train_loader = DataLoader(train_subset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_subset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
