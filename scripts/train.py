@@ -1,6 +1,5 @@
 import argparse
 from data.dataloaders import get_cifar10_dataloaders
-from models import get_resnet, get_efficientnet  # Add other imports as needed
 from trainers.trainer import Trainer
 from utils.config import load_config
 from utils.logging import setup_logger
@@ -17,6 +16,7 @@ def main():
 
     # Setup data, model, and logger
     train_loader, val_loader, _ = get_cifar10_dataloaders(batch_size=config['batch_size'])
+    print(globals())
     model = globals()[f'get_{args.model.split("-")[0]}'](model_name=args.model)
     logger, writer = setup_logger()
 
