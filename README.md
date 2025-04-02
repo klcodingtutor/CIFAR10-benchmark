@@ -1,37 +1,37 @@
-# CIFAR-10 Benchmark Repository
+# CIFAR-10 Benchmark Project
 
-This repository provides a framework for benchmarking various deep learning models on the CIFAR-10 dataset. It includes scripts for training, evaluation, and utilities to facilitate the benchmarking process.
+This project provides a benchmark for training and evaluating deep learning models on the CIFAR-10 dataset. It includes implementations for various model architectures, data loading utilities, and configuration settings.
 
-## Directory Structure
+## Project Structure
 
-- `checkpoints/`: This directory stores trained model weights, such as `resnet18_best.pth`. It will be populated by the `Trainer` class during training.
-  
-- `results/`: This directory is meant for storing benchmark results, like `benchmark.txt`. It will be populated by the `benchmark.py` script.
+- **configs/**: Contains YAML configuration files for model and training parameters.
+  - `efficientnet_b0_cifar10.yaml`: Configuration for EfficientNet-B0 on CIFAR-10.
 
-- `src/`: This directory contains the source code for the project.
-  - `data/`: Contains data loaders and augmentations for the CIFAR-10 dataset.
-  - `models/`: Contains definitions for various deep learning models like ResNet and EfficientNet.
-  - `training/`: Contains the training script responsible for loading data, initializing models, and saving checkpoints.
-  - `evaluation/`: Contains the evaluation script used for assessing trained models and computing performance metrics.
-  - `utils/`: Contains utility functions for logging, metrics, and configuration handling.
+- **dataloaders/**: Contains scripts for loading datasets.
+  - `cifar10_loader.py`: Implements the CIFAR-10 dataloader with data transformations.
+
+- **models/**: Contains implementations of different model architectures.
+  - `__init__.py`: Model registry for easy access to different architectures.
+  - `resnet.py`: Implements ResNet variants.
+  - `efficientnet.py`: Implements EfficientNet variants.
+
+- **README.md**: Project documentation.
+
+- **requirements.txt**: Lists the dependencies required for the project.
 
 ## Installation
 
-To install the required dependencies, run:
+To set up the project, clone the repository and install the required dependencies:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
 ## Usage
 
-1. **Training a Model**: To train a model, run the training script located in `src/training/train.py`. Ensure that your data is properly set up and accessible.
-
-2. **Evaluating a Model**: After training, you can evaluate the model using the script in `src/evaluation/evaluate.py`. This will load the model weights from the `checkpoints/` directory and compute performance metrics.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.
+1. Configure the training parameters in the `configs/efficientnet_b0_cifar10.yaml` file.
+2. Load the CIFAR-10 dataset using the provided dataloader in `dataloaders/cifar10_loader.py`.
+3. Choose a model architecture from the `models` directory and train it using the specified configurations.
 
 ## License
 

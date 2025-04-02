@@ -1,68 +1,20 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_resnet18(model_name='resnet18', num_classes=10, pretrained=True):
-    if model_name == 'resnet18':
-        model = models.resnet18(pretrained=pretrained)
-    else:
+def get_resnet(model_name, pretrained=False, num_classes=10):
+    resnet_dict = {
+        'resnet18': models.resnet18,
+        'resnet34': models.resnet34,
+        'resnet50': models.resnet50,
+    }
+    model_fn = resnet_dict.get(model_name)
+    if not model_fn:
         raise ValueError(f"Unsupported ResNet variant: {model_name}")
     
-    # Modify the final fully connected layer for CIFAR-10 (10 classes)
+    model = model_fn(pretrained=pretrained)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     return model
 
-def get_resnet34(model_name='resnet34', num_classes=10, pretrained=True):
-    if model_name == 'resnet34':
-        model = models.resnet34(pretrained=pretrained)
-    else:
-        raise ValueError(f"Unsupported ResNet variant: {model_name}")
-    
-    # Modify the final fully connected layer for CIFAR-10 (10 classes)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
-    return model
-
-def get_resnet50(model_name='resnet50', num_classes=10, pretrained=True):
-    if model_name == 'resnet50':
-        model = models.resnet50(pretrained=pretrained)
-    else:
-        raise ValueError(f"Unsupported ResNet variant: {model_name}")
-    
-    # Modify the final fully connected layer for CIFAR-10 (10 classes)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
-    return model
-
-def get_resnet101(model_name='resnet101', num_classes=10, pretrained=True):
-    if model_name == 'resnet101':
-        model = models.resnet101(pretrained=pretrained)
-    else:
-        raise ValueError(f"Unsupported ResNet variant: {model_name}")
-    
-    # Modify the final fully connected layer for CIFAR-10 (10 classes)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
-    return model
-
-def get_resnet152(model_name='resnet152', num_classes=10, pretrained=True):
-    if model_name == 'resnet152':
-        model = models.resnet152(pretrained=pretrained)
-    else:
-        raise ValueError(f"Unsupported ResNet variant: {model_name}")
-    
-    # Modify the final fully connected layer for CIFAR-10 (10 classes)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
-    return model
-
-
-def get_resnet18_transfer_learning(model_name='resnet18', num_classes=10, pretrained=True):
-    print('Using get_resnet18_transfer_learning')
-    if model_name == 'resnet18':
-        model = models.resnet18(pretrained=pretrained)
-    else:
-        raise ValueError(f"Unsupported ResNet variant: {model_name}")
-    
-    # Freeze all layers except the final fully connected layer
-    for param in model.parameters():
-        param.requires_grad = False
-
-    # Modify the final fully connected layer for CIFAR-10 (10 classes)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
-    return model
+if __name__ == "__main__":
+    model = get_resnet('resnet18', pretrained=True)
+    print(model)
