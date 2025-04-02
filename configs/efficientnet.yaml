@@ -1,6 +1,0 @@
-model: efficientnet-b0
-epochs: 100
-batch_size: 128
-optimizer: adam
-lr: 0.001
-scheduler: null

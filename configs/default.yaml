@@ -1,7 +1,0 @@
-model: null
-epochs: 50
-batch_size: 64
-optimizer: adam
-lr: 0.001
-momentum: 0.9
-scheduler: null

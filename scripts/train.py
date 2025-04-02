@@ -27,7 +27,7 @@ def main():
         )
 
     # Setup model and logger
-    model_func = globals()[f'get_{config.replace("-", "_")}']
+    model_func = globals()[f'get_{config.model.replace("-", "_")}']
     model = model_func(
         model_name=config['model'],
         num_classes=10 if config['dataset'] == 'cifar10' else len(train_loader.dataset.label_to_idx),

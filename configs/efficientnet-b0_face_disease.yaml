@@ -1,8 +1,0 @@
-model: efficientnet-b0
-dataset: face
-task: disease
-epochs: 50
-batch_size: 64
-optimizer: adam  # EfficientNet often uses Adam
-lr: 0.001
-scheduler: null

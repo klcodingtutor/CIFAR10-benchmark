@@ -1,9 +1,0 @@
-model: simple_cnn
-dataset: face
-task: disease
-epochs: 50
-batch_size: 64
-optimizer: adam
-lr: 0.001
-momentum: 0.9
-scheduler: null  # Simple model, no scheduler
