@@ -1,0 +1,11 @@
+model: vit_b_16
+model_family: vit
+dataset: cifar10
+task: gender
+epochs: 1
+batch_size: 64
+optimizer: adam
+lr: 0.001  # Lower LR often works better for transformers
+scheduler: null
+pretrained: false
+transfer_learning: true
