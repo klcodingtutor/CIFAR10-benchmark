@@ -33,7 +33,7 @@ def main():
         )
 
     # Setup model and logger
-    model_func = globals()[f'get_{args.model.replace("-", "_")}'] + "_transfer_learning"
+    model_func = globals()[f'get_{args.model.replace("-", "_")}' + "_transfer_learning"] 
     model = model_func(model_name=args.model, num_classes=10 if config['dataset'] == 'cifar10' else len(train_loader.dataset.label_to_idx))
     # print out model
     print(model)
