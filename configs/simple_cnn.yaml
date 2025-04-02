@@ -1,0 +1,7 @@
+model: simple_cnn
+epochs: 50
+batch_size: 128
+optimizer: sgd
+lr: 0.01
+momentum: 0.9
+scheduler: null
