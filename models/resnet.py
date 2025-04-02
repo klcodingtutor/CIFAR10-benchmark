@@ -2,6 +2,18 @@ import torch.nn as nn
 import torchvision.models as models
 
 def get_resnet(model_name='resnet18', num_classes=10, pretrained=False):
+    """
+    Creates a ResNet model with a modified fully connected layer for a specified number of classes.
+    Args:
+        model_name (str): The name of the ResNet variant to use. Supported variants are 
+                          'resnet18', 'resnet34', 'resnet50', 'resnet101', and 'resnet152'.
+        num_classes (int): The number of output classes for the final fully connected layer.
+        pretrained (bool): Whether to load a model pre-trained on ImageNet.
+    Returns:
+        torch.nn.Module: The ResNet model with the modified fully connected layer.
+    Raises:
+        ValueError: If an unsupported ResNet variant is specified.
+    """
     resnet_variants = {
         'resnet18': models.resnet18,
         'resnet34': models.resnet34,
