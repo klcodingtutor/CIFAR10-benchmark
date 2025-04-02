@@ -1,3 +1,4 @@
+from utils.config import load_config
 import argparse
 import torch
 from models import *
@@ -6,13 +7,15 @@ from trainers.evaluator import Evaluator
 
 def main():
     parser = argparse.ArgumentParser(description='Evaluate a model on CIFAR-10')
-    parser.add_argument('--model', type=str, required=True, help='Model name (e.g., resnet18)')
     parser.add_argument('--checkpoint', type=str, required=True, help='Path to model checkpoint')
+    parser.add_argument('--config', type=str, required=True, help='Path to config file')
     args = parser.parse_args()
+
+    config = load_config(args.config)
 
     # Setup data and model
     _, _, test_loader = get_cifar10_dataloaders()
-    model = globals()[f'get_{args.model.split("-")[0]}'](model_name=args.model)
+    model = globals()[f'get_{config.split("-")[0]}'](model_name=config.model)
     model.load_state_dict(torch.load(args.checkpoint))
 
     # Evaluate

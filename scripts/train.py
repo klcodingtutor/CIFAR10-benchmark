@@ -8,9 +8,6 @@ from utils.logging import setup_logger
 def main():
     parser = argparse.ArgumentParser(description='Train a model on a dataset')
     parser.add_argument('--config', type=str, required=True, help='Path to config file')
-    # parser.add_argument('--model', type=str, required=True, help='Model name (e.g., resnet18)')
-    # parser.add_argument('--dataset', type=str, default='cifar10', choices=['cifar10', 'face'], help='Dataset to use')
-    # parser.add_argument('--task', type=str, default=None, help='Task for face dataset (e.g., gender)')
     args = parser.parse_args()
 
     # Load config
@@ -30,7 +27,7 @@ def main():
         )
 
     # Setup model and logger
-    model_func = globals()[f'get_{args.model.replace("-", "_")}']
+    model_func = globals()[f'get_{config.replace("-", "_")}']
     model = model_func(
         model_name=config['model'],
         num_classes=10 if config['dataset'] == 'cifar10' else len(train_loader.dataset.label_to_idx),
