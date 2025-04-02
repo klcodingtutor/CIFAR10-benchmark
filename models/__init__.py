@@ -5,7 +5,7 @@ from utils.decorator import print_args
 @print_args
 def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
     if model_family == 'resnet':
-        return get_resnet(
+        model = get_resnet(
             model_name=model_name,
             model_family=model_family,
             pretrained=pretrained,
@@ -13,7 +13,7 @@ def get_model(model_name, model_family, pretrained, num_classes, transfer_learni
             transfer_learning=transfer_learning
         )
     elif model_family == 'efficientnet':
-        return get_efficientnet(
+        model = get_efficientnet(
             model_name=model_name,
             model_family=model_family,
             pretrained=pretrained,
@@ -22,6 +22,10 @@ def get_model(model_name, model_family, pretrained, num_classes, transfer_learni
         )
     else:
         raise ValueError(f"Unsupported model family: {model_family}")
+
+    print("Model Summary:")
+    print(model)
+    return model
 
 if __name__ == "__main__":
     model = get_model('resnet18', 'resnet', pretrained=True, transfer_learning=True)
