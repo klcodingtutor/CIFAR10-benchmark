@@ -7,3 +7,5 @@ momentum: 0.9
 scheduler: steplr
 step_size: 30
 gamma: 0.1
+pretrained: False
+num_classes: 10
