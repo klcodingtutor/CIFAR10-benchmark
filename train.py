@@ -92,7 +92,9 @@ def main():
         # Save best model based on test
         if test_acc > best_acc:
             best_acc = test_acc
-            filepath = f"{config['model']}_{config['dataset']}_{config['task']}_best.pth"
+            
+            # Save the model checkpoint under the "checkpoints" directory
+            filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_best.pth"
             save_checkpoint(model, config, filepath)
             best_acc_epoch = epoch + 1
             
@@ -114,7 +116,7 @@ def main():
         # Save best model based on val
         if val_acc > best_acc_val:
             best_acc_val = val_acc
-            filepath = f"{config['model']}_{config['dataset']}_{config['task']}_val_best.pth"
+            filepath = f"./checkpoints/{{config['model']}_{config['dataset']}_{config['task']}_val_best.pth"
             save_checkpoint(model, config, filepath)
             best_acc_val_epoch = epoch + 1
 
