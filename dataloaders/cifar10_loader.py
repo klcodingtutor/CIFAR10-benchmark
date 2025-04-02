@@ -20,7 +20,7 @@ def get_cifar10_dataloaders(batch_size, data_dir='./data', val_split=0.1):
     testset = torchvision.datasets.CIFAR10(root=data_dir, train=False, download=True, transform=transform_test)
     
     # -----------------------------------------------------------------------------------
-    SCALE_FACTOR = 0.1
+    SCALE_FACTOR = 1
     print(f"Scaling factor: {SCALE_FACTOR}")
 
     print(f"Original trainset size: {len(trainset)}")
