@@ -21,7 +21,8 @@ def get_face_dataloaders(data_dir='./data/face', batch_size=128, num_workers=4, 
     # Load CSV and split (assuming no explicit val split, we'll create one)
     csv_path = os.path.join(data_dir, 'face_images_path_with_meta_jpg_exist_only.csv')
     if not os.path.exists(csv_path):
-        raise FileNotFoundError(f"CSV not found at: {csv_path}")
+        csv_full_path = os.path.abspath(csv_path)
+        raise FileNotFoundError(f"CSV not found at: {csv_full_path}")
     
     df = pd.read_csv(csv_path)
     train_df = df[df['split'] == 'train']
