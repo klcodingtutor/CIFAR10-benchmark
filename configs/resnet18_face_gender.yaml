@@ -7,5 +7,5 @@ batch_size: 64
 optimizer: adam
 lr: 0.01
 scheduler: null
-pretrained: True
-transfer_learning: true
+pretrained: false
+transfer_learning: false
