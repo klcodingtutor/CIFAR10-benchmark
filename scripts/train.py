@@ -27,7 +27,7 @@ def main():
         if 'task' not in config:
             raise ValueError("Task must be specified for face dataset")
         train_loader, val_loader, _ = get_face_dataloaders(
-            data_dir='./data',
+            data_dir='./data/face',
             batch_size=config['batch_size'],
             task=config['task']
         )
