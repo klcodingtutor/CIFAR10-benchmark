@@ -6,6 +6,7 @@ import torch.optim as optim
 
 class Trainer:
     def __init__(self, model, train_loader, val_loader, config, logger, writer, device='cuda'):
+        print(f"Training with Config: {config}")
         self.model = model.to(device)
         self.train_loader = train_loader
         self.val_loader = val_loader
