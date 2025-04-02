@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_resnet(model_name='resnet18', num_classes=10, pretrained=False):
+def get_resnet(model_name, num_classes, pretrained):
     """
     Creates a ResNet model with a modified fully connected layer for a specified number of classes.
     Args:
@@ -28,6 +28,6 @@ def get_resnet(model_name='resnet18', num_classes=10, pretrained=False):
     # Get the corresponding ResNet model
     model = resnet_variants[model_name](pretrained=pretrained)
     
-    # Modify the final fully connected layer for CIFAR-10 (10 classes)
+    # Modify the final fully connected layer
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     return model

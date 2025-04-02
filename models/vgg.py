@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_vgg(model_name='vgg16', num_classes=10, pretrained=False):
+def get_vgg(model_name, num_classes, pretrained):
     """
     Creates and returns a VGG model with a modified classifier for a specified number of classes.
     Args:
