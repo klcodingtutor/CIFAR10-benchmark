@@ -60,8 +60,8 @@ def save_checkpoint(model, config, filepath):
 
 if __name__ == "__main__":
     # Simple test (requires other modules)
-    from ..dataloaders.cifar10_loader import get_cifar10_dataloaders
-    from ..models import get_model
+    from dataloaders.cifar10_loader import get_cifar10_dataloaders
+    from models import get_model
     
     config = {'batch_size': 64, 'model': 'resnet18', 'model_family': 'resnet', 'pretrained': True}
     trainloader, testloader = get_cifar10_dataloaders(config['batch_size'])

@@ -1,5 +1,5 @@
-from .resnet import get_resnet
-from .efficientnet import get_efficientnet
+from resnet import get_resnet
+from efficientnet import get_efficientnet
 
 def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
     if model_family == 'resnet':

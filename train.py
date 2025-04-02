@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from argparse import ArgumentParser
-from .utils.config import load_config
-from .utils.train_utils import train_epoch, evaluate, save_checkpoint
-from .dataloaders.cifar10_loader import get_cifar10_dataloaders
-from .models import get_model
+from utils.config import load_config
+from utils.train_utils import train_epoch, evaluate, save_checkpoint
+from dataloaders.cifar10_loader import get_cifar10_dataloaders
+from models import get_model
 
 def main():
     # Parse command-line arguments
