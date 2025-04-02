@@ -17,7 +17,7 @@ def get_cifar10_dataloaders(data_dir='./data', batch_size=128, val_split=0.1, nu
 
     train_subset = Subset(train_dataset, train_idx)
     val_subset = Subset(train_dataset, val_idx)
-    test_subset = Subset(test_dataset, range(len(test_dataset)))
+    test_subset = Subset(test_dataset, test_idx)
 
     PARTIAL_RATIO = 0.1 # reduce everything to 10% of the original dataset
     partial_train_idx = train_idx[:int(PARTIAL_RATIO * len(train_idx))]
