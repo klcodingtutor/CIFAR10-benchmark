@@ -20,7 +20,9 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Load dataloaders
-    trainloader, testloader = get_cifar10_dataloaders(config['batch_size'])
+    trainloader, valloader, testloader = get_cifar10_dataloaders(config['batch_size'])
+
+
     
     # Load model
     model = get_model(
@@ -46,23 +48,37 @@ def main():
         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
     
     # Training loop
+    # -----------------------------------------------------------------------------------
+    # TODO:
     best_acc = 0.0
+    best_acc_val = 0.0
+    # -----------------------------------------------------------------------------------
     for epoch in range(config['epochs']):
         print(f"\nEpoch {epoch+1}/{config['epochs']}")
         
-        train_loss, train_acc = train_epoch(model, trainloader, criterion, optimizer, device)
+        train_loss, train_acc, val_loss, val_acc = train_epoch(model, trainloader, valloader, criterion, optimizer, device)
         test_loss, test_acc = evaluate(model, testloader, criterion, device)
         
         print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
+        print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
         print(f"Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.2f}%")
         
-        # Save best model
+        # -----------------------------------------------------------------------------------
+        # TODO:
+        # Save best model based on test
         if test_acc > best_acc:
             best_acc = test_acc
             filepath = f"{config['model']}_{config['dataset']}_{config['task']}_best.pth"
             save_checkpoint(model, config, filepath)
+        # -----------------------------------------------------------------------------------
     
-    print(f"Training completed. Best Test Acc: {best_acc:.2f}%")
+        # Save best model based on val
+        if val_acc > best_acc_val:
+            best_acc_val = val_acc
+            filepath = f"{config['model']}_{config['dataset']}_{config['task']}_val_best.pth"
+            save_checkpoint(model, config, filepath)
+
+    print(f"Training completed. Best Val Acc: {best_acc:.2f}%")
 
 if __name__ == "__main__":
     main()
