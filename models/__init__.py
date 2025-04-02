@@ -7,7 +7,6 @@ from .vit import get_vit
 from .swin import get_swin
 from .convnext import get_convnext
 from .efficientnetv2 import get_efficientnetv2
-from .squeezenet import get_squeezenet
 from .shufflenet import get_shufflenet
 from utils.decorator import print_args
 
