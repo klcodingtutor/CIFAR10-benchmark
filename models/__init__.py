@@ -9,13 +9,22 @@ def print_args(func):
 
 @print_args
 def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
-    print("DEBUG")
-    print(model_name, model_family, pretrained, num_classes, transfer_learning)
-    print("DEBUG")
     if model_family == 'resnet':
-        return get_resnet(model_name, pretrained, num_classes, transfer_learning)
+        return get_resnet(
+            model_name=model_name,
+            model_family=model_family,
+            pretrained=pretrained,
+            num_classes=num_classes,
+            transfer_learning=transfer_learning
+        )
     elif model_family == 'efficientnet':
-        return get_efficientnet(model_name, pretrained, num_classes, transfer_learning)
+        return get_efficientnet(
+            model_name=model_name,
+            model_family=model_family,
+            pretrained=pretrained,
+            num_classes=num_classes,
+            transfer_learning=transfer_learning
+        )
     else:
         raise ValueError(f"Unsupported model family: {model_family}")
 
