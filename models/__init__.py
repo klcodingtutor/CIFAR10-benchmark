@@ -3,6 +3,7 @@ from .efficientnet import get_efficientnet
 from .vgg import get_vgg
 from .densenet import get_densenet
 from .mobilenet import get_mobilenet
+from .custom_models import get_custom_model
 
 __all__ = [
     'get_resnet18',
