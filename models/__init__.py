@@ -1,4 +1,4 @@
-from .resnet import get_resnet18, get_resnet34, get_resnet50, get_resnet101, get_resnet152
+from .resnet import get_resnet18, get_resnet34, get_resnet50, get_resnet101, get_resnet152, get_resnet18_transfer_learning
 from .efficientnet import get_efficientnet
 from .vgg import get_vgg
 from .densenet import get_densenet
@@ -13,5 +13,6 @@ __all__ = [
     'get_efficientnet',
     'get_vgg',
     'get_densenet',
-    'get_mobilenet'
+    'get_mobilenet',
+    "get_resnet18_transfer_learning",
 ]

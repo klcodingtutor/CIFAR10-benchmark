@@ -51,3 +51,18 @@ def get_resnet152(model_name='resnet152', num_classes=10, pretrained=False):
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     return model
 
+
+def get_resnet18_transfer_learning(model_name='resnet18', num_classes=10, pretrained=False):
+    print('Using get_resnet18_transfer_learning')
+    if model_name == 'resnet18':
+        model = models.resnet18(pretrained=pretrained)
+    else:
+        raise ValueError(f"Unsupported ResNet variant: {model_name}")
+    
+    # Freeze all layers except the final fully connected layer
+    for param in model.parameters():
+        param.requires_grad = False
+
+    # Modify the final fully connected layer for CIFAR-10 (10 classes)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    return model
