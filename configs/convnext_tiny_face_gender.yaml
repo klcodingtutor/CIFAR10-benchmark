@@ -1,7 +1,7 @@
 model: convnext_tiny
 model_family: convnext
-dataset: cifar10
-task: gender
+dataset: face
+task: age_10
 epochs: 1
 batch_size: 64
 optimizer: adam

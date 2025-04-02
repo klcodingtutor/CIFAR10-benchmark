@@ -1,7 +1,7 @@
 model: swin_t
 model_family: swin
-dataset: cifar10
-task: gender
+dataset: face
+task: age_10
 epochs: 1
 batch_size: 64
 optimizer: adam

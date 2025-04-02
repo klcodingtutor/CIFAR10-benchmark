@@ -1,7 +1,7 @@
 model: vgg16
 model_family: vgg
-dataset: cifar10
-task: gender
+dataset: face
+task: age_10
 epochs: 1
 batch_size: 64
 optimizer: adam

@@ -1,7 +1,7 @@
 model: shufflenet_v2_x1_0
 model_family: shufflenet
-dataset: cifar10
-task: gender
+dataset: face
+task: age_10
 epochs: 1
 batch_size: 64
 optimizer: adam
