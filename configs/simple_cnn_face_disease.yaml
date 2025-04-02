@@ -1,4 +1,4 @@
-model: resnet18
+model: simple_cnn
 dataset: face
 task: disease
 epochs: 50
@@ -6,6 +6,4 @@ batch_size: 64
 optimizer: adam
 lr: 0.001
 momentum: 0.9
-scheduler: steplr
-step_size: 15
-gamma: 0.1
+scheduler: null  # Simple model, no scheduler

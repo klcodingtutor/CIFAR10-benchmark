@@ -1,4 +1,4 @@
-model: resnet18
+model: resnet50
 dataset: face
 task: disease
 epochs: 50

@@ -1,8 +1,8 @@
 model: mobilenet_v2
 epochs: 100
 batch_size: 128
-optimizer: sgd
-lr: 0.045
+optimizer: adam
+lr: 0.001
 momentum: 0.9
 scheduler: steplr
 step_size: 30

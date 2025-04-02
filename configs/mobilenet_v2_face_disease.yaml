@@ -1,4 +1,4 @@
-model: resnet18
+model: mobilenet_v2
 dataset: face
 task: disease
 epochs: 50
