@@ -9,6 +9,9 @@ def print_args(func):
 
 @print_args
 def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
+    print("DEBUG")
+    print(model_name, model_family, pretrained, num_classes, transfer_learning)
+    print("DEBUG")
     if model_family == 'resnet':
         return get_resnet(model_name, pretrained, num_classes, transfer_learning)
     elif model_family == 'efficientnet':
