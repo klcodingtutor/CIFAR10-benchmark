@@ -1,0 +1,11 @@
+model: resnet18
+model_family: resnet
+dataset: face
+task: age_10
+epochs: 1
+batch_size: 64
+optimizer: adam
+lr: 0.001
+scheduler: null
+pretrained: false
+transfer_learning: true
