@@ -4,7 +4,6 @@ import torch.optim as optim
 from tqdm import tqdm
 from utils.decorator import print_args
 
-@print_args
 def train_epoch(model, trainloader, valloader, criterion, optimizer, device):
     """Train the model for one epoch and evaluate on validation set."""
     # Training phase
