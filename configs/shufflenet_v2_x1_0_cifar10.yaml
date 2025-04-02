@@ -1,0 +1,11 @@
+model: shufflenet_v2_x1_0
+model_family: shufflenet
+dataset: cifar10
+task: classification
+epochs: 100
+batch_size: 64
+optimizer: adam
+lr: 0.001
+scheduler: null
+pretrained: True
+transfer_learning: true

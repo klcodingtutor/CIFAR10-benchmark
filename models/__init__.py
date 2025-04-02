@@ -7,6 +7,8 @@ from .vit import get_vit
 from .swin import get_swin
 from .convnext import get_convnext
 from .efficientnetv2 import get_efficientnetv2
+from .squeezenet import get_squeezenet
+from .shufflenet import get_shufflenet
 from utils.decorator import print_args
 
 @print_args
@@ -83,6 +85,22 @@ def get_model(model_name, model_family, pretrained, num_classes, transfer_learni
             num_classes=num_classes,
             transfer_learning=transfer_learning
         )
+    elif model_family == 'squeezenet':
+        model = get_squeezenet(
+            model_name=model_name,
+            model_family=model_family,
+            pretrained=pretrained,
+            num_classes=num_classes,
+            transfer_learning=transfer_learning
+        )
+    elif model_family == 'shufflenet':
+        model = get_shufflenet(
+            model_name=model_name,
+            model_family=model_family,
+            pretrained=pretrained,
+            num_classes=num_classes,
+            transfer_learning=transfer_learning
+        )
     else:
         raise ValueError(f"Unsupported model family: {model_family}")
 
@@ -109,4 +127,6 @@ if __name__ == "__main__":
     model = get_model('convnext_tiny', 'convnext', pretrained=True, num_classes=10, transfer_learning=True)
     print(model)
     model = get_model('efficientnet_v2_s', 'efficientnetv2', pretrained=True, num_classes=10, transfer_learning=True)
+    print(model)
+    model = get_model('shufflenet_v2_x1_0', 'shufflenet', pretrained=True, num_classes=10, transfer_learning=True)
     print(model)
