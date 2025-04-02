@@ -8,10 +8,13 @@ def get_cifar10_dataloaders(data_dir='./data', batch_size=128, val_split=0.1, nu
     test_dataset = datasets.CIFAR10(root=data_dir, train=False, download=True, transform=get_test_transforms())
 
     num_train = len(train_dataset)
+    num_test = len(test_dataset)
+
     indices = torch.randperm(num_train).tolist()
     split = int(val_split * num_train)
     train_idx, val_idx = indices[split:], indices[:split]
-    test_indices = torch.randperm(num_train).tolist()
+    
+    test_indices = torch.randperm(num_test).tolist()
     test_idx = test_indices[:len(test_dataset)]
 
 
