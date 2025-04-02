@@ -5,7 +5,7 @@ from PIL import Image
 import os
 import torchvision.transforms as transforms
 
-def get_face_dataloaders(data_dir='./data', batch_size=128, num_workers=4, task='gender'):
+def get_face_dataloaders(data_dir='./data/face', batch_size=128, num_workers=4, task='gender'):
     """
     Load face dataset from CSV for a specific task.
     
