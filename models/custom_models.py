@@ -24,10 +24,14 @@ class SimpleCNN(nn.Module):
         x = self.classifier(x)
         return x
 
-def get_custom_model(model_name='simple_cnn', num_classes=10):
+def get_simple_cnn(model_name='simple_cnn', num_classes=10):
     if model_name == 'simple_cnn':
         return SimpleCNN(num_classes=num_classes)
-    elif model_name == 'simple_cnn_transfer_learning':
+    else:
+        raise ValueError(f"Unsupported custom model: {model_name}")
+
+def get_simple_cnn_transfer_learning(model_name='simple_cnn', num_classes=10):
+    if model_name == 'simple_cnn':
         return SimpleCNN(num_classes=num_classes)
     else:
         raise ValueError(f"Unsupported custom model: {model_name}")
