@@ -15,7 +15,7 @@ def main():
 
     # Setup data, model, and logger
     train_loader, val_loader, _ = get_cifar10_dataloaders(batch_size=config['batch_size'])
-    model = globals()[f'get_{config["model"].split("-")[0]}'](model_name=args.model)
+    model = globals()[f'get_{config["model"].split("-")[0]}'](model_name=config["model"])
     logger, writer = setup_logger()
 
     # Train
