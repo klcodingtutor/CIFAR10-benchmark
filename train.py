@@ -3,14 +3,14 @@ import torch.nn as nn
 import torch.optim as optim
 from argparse import ArgumentParser
 from utils.config import load_config
-from utils.train_utils import train_epoch, evaluate, save_checkpoint
-from dataloaders.cifar10_loader import get_cifar10_dataloaders
+from utils.train_utils import train_epoch, evaluate, save_checkpoint, load_checkpoint
+from dataloaders.cifar10_loader import get_cifar10_dataloaders, get_face_dataloaders
 from models import get_model
 import json
 
 def main():
     # Parse command-line arguments
-    parser = ArgumentParser(description="CIFAR-10 Model Benchmarking")
+    parser = ArgumentParser(description="Model Benchmarking")
     parser.add_argument('--config', type=str, required=True, help="Path to the config YAML file")
     args = parser.parse_args()
     
@@ -20,10 +20,21 @@ def main():
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    # Load dataloaders
-    trainloader, valloader, testloader = get_cifar10_dataloaders(config['batch_size'])
-
-
+    # Load dataloaders based on dataset
+    if config['dataset'].lower() == 'cifar10':
+        trainloader, valloader, testloader = get_cifar10_dataloaders(config['batch_size'])
+        num_classes = 10  # Fixed for CIFAR-10
+    elif config['dataset'].lower() == 'face':
+        trainloader, valloader, testloader, train_dataset, val_dataset, test_dataset, df = get_face_dataloaders(
+            data_dir='./data/face',
+            batch_size=config['batch_size'],
+            num_workers=4,
+            task=config['task']
+        )
+        num_classes = len(train_dataset.label_to_idx)  # Dynamically set from train_dataset
+        print(f"Number of classes for task '{config['task']}': {num_classes}")
+    else:
+        raise ValueError(f"Unsupported dataset: {config['dataset']}")
     
     # Load model
     model = get_model(
@@ -31,8 +42,16 @@ def main():
         model_family=config['model_family'],
         pretrained=config['pretrained'],
         transfer_learning=config['transfer_learning'],
-        num_classes=10
+        num_classes=num_classes
     ).to(device)
+    
+    # # Load checkpoint if provided from config
+    # if config.get('checkpoint'):
+    #     print(f"Loading checkpoint from {config['checkpoint']}")
+    #     loaded_config = config.copy()
+    #     model, loaded_config = load_checkpoint(model, args.checkpoint, device)
+    #     print(f"Loaded checkpoint config: {loaded_config}")
+    #     config = loaded_config
     
     # Define loss, optimizer
     criterion = nn.CrossEntropyLoss()
@@ -110,8 +129,13 @@ def main():
             }
             with open(info_filepath, "w") as f:
                 json.dump(epoch_info, f, indent=4)
-
-    print(f"Training completed. Best Val Acc: {best_acc:.2f}%")
+        
+        # Step the scheduler if it exists
+        if scheduler:
+            scheduler.step()
+    
+    print(f"Training completed. Best Test Acc: {best_acc:.2f}% at epoch {best_acc_epoch}, "
+          f"Best Val Acc: {best_acc_val:.2f}% at epoch {best_acc_val_epoch}")
 
 if __name__ == "__main__":
     main()
