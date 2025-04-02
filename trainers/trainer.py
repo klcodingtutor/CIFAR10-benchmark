@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 class Trainer:
-    def __init__(self, model, train_loader, val_loader, config, logger, writer, device='cuda'):
+    def __init__(self, model, train_loader, val_loader, config, logger, writer, device='cuda', save_suffix=None):
         self.model = model.to(device)
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -13,6 +13,7 @@ class Trainer:
         self.logger = logger
         self.writer = writer
         self.device = device
+        self.save_suffix = save_suffix
         
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = self._get_optimizer()
@@ -60,7 +61,10 @@ class Trainer:
                 self.best_acc = val_acc
                 if not os.path.exists('checkpoints'):
                     os.makedirs('checkpoints')
-                torch.save(self.model.state_dict(), f'checkpoints/{self.config["model"]}_best.pth')
+                if self.save_suffix is not None:
+                    torch.save(self.model.state_dict(), f'checkpoints/{self.config["model"]}_{save_suffix}_best.pth')
+                else:
+                    torch.save(self.model.state_dict(), f'checkpoints/{self.config["model"]}_best.pth')
     
     def validate(self, epoch):
         self.model.eval()

@@ -47,8 +47,9 @@ def main():
     print(model)
     logger, writer = setup_logger()
 
+    save_suffix = config['task']
     # Train
-    trainer = Trainer(model, train_loader, val_loader, config, logger, writer)
+    trainer = Trainer(model, train_loader, val_loader, config, logger, writer, save_suffix)
     trainer.train()
     writer.close()
 
