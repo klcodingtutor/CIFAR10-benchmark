@@ -17,9 +17,19 @@ def main():
     train_loader, val_loader, _ = get_cifar10_dataloaders(batch_size=config['batch_size'])
 
     if "resnet" in config["model"].lower():
-        model = globals()[f'get_resnet'](model_name=config["model"])
+        model = globals()[f'get_resnet'](
+            model_name=config["model"],
+            pretrained=config["pretrained"],
+            num_classes=config["num_classes"]
+        )
+    elif "vgg" in config["model"].lower():
+        model = globals()[f'get_vgg'](
+            model_name=config["model"],
+            pretrained=config["pretrained"],
+            num_classes=config["num_classes"]
+        )
     else:
-        model = globals()[f'get_resnet'](model_name=config["model"])
+        raise ValueError(f"Unsupported model type: {config['model']}")
 
     logger, writer = setup_logger()
 
@@ -30,3 +40,16 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# yaml
+# model: resnet18
+# epochs: 10
+# batch_size: 128
+# optimizer: adam
+# lr: 0.001
+# momentum: 0.9
+# scheduler: steplr
+# step_size: 30
+# gamma: 0.1
+# pretrained: False
+# num_classes: 10
