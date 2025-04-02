@@ -2,10 +2,10 @@ model: convnext_tiny
 model_family: convnext
 dataset: cifar10
 task: classification
-epochs: 100
+epochs: 1
 batch_size: 64
 optimizer: adam
 lr: 0.001  # Lower LR can help with modern models
 scheduler: null
-pretrained: True
+pretrained: false
 transfer_learning: true

@@ -36,11 +36,11 @@ model: efficientnet-b0
 model_family: efficientnet
 dataset: cifar10
 task: classification
-epochs: 10
+epochs: 1
 batch_size: 64
 optimizer: adam
 lr: 0.001
 scheduler: null
-pretrained: True
+pretrained: false
 transfer_learning: true
 ```

@@ -2,10 +2,10 @@ model: resnet18
 model_family: resnet
 dataset: cifar10
 task: classification
-epochs: 100
+epochs: 1
 batch_size: 64
 optimizer: adam
 lr: 0.01
 scheduler: null
-pretrained: True
+pretrained: false
 transfer_learning: true

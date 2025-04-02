@@ -2,10 +2,10 @@ model: swin_t
 model_family: swin
 dataset: cifar10
 task: classification
-epochs: 100
+epochs: 1
 batch_size: 64
 optimizer: adam
 lr: 0.001
 scheduler: null
-pretrained: True
+pretrained: false
 transfer_learning: true
