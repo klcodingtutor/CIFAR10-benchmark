@@ -1,6 +1,13 @@
 from .resnet import get_resnet
 from .efficientnet import get_efficientnet
 
+def print_args(func):
+    def wrapper(*args, **kwargs):
+        print(f"Arguments: args={args}, kwargs={kwargs}")
+        return func(*args, **kwargs)
+    return wrapper
+
+@print_args
 def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
     if model_family == 'resnet':
         return get_resnet(model_name, pretrained, num_classes, transfer_learning)
