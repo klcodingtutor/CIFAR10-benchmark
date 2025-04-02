@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
+def get_resnet(model_name, model_family, pretrained, num_classes, transfer_learning):
     if model_family != 'resnet':
         raise ValueError(f"Unsupported model family: {model_family}")
     
@@ -30,5 +30,5 @@ if __name__ == "__main__":
     num_classes = 10
     transfer_learning = True
 
-    model = get_model(model_name, model_family, pretrained, num_classes, transfer_learning)
+    model = get_resnet(model_name, model_family, pretrained, num_classes, transfer_learning)
     print(model)
