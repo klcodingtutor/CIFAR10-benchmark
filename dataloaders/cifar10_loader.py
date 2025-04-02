@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 
 def get_cifar10_dataloaders(batch_size, data_dir='./data', val_split=0.1):
     transform_train = transforms.Compose([
+        transforms.Resize((36, 36)),
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
