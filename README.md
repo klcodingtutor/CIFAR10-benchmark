@@ -1,38 +1,46 @@
-# CIFAR-10 Benchmark Project
+# CIFAR-10 Model Benchmark Repository
 
-This project provides a benchmark for training and evaluating deep learning models on the CIFAR-10 dataset. It includes implementations for various model architectures, data loading utilities, and configuration settings.
+This repository provides a benchmark for training and evaluating popular deep learning models (e.g., ResNet, EfficientNet) on the CIFAR-10 dataset using PyTorch.
 
-## Project Structure
-
-- **configs/**: Contains YAML configuration files for model and training parameters.
-  - `efficientnet_b0_cifar10.yaml`: Configuration for EfficientNet-B0 on CIFAR-10.
-
-- **dataloaders/**: Contains scripts for loading datasets.
-  - `cifar10_loader.py`: Implements the CIFAR-10 dataloader with data transformations.
-
-- **models/**: Contains implementations of different model architectures.
-  - `__init__.py`: Model registry for easy access to different architectures.
-  - `resnet.py`: Implements ResNet variants.
-  - `efficientnet.py`: Implements EfficientNet variants.
-
-- **README.md**: Project documentation.
-
-- **requirements.txt**: Lists the dependencies required for the project.
-
-## Installation
-
-To set up the project, clone the repository and install the required dependencies:
-
-```bash
-pip install -r requirements.txt
+## Repository Structure
+```
+cifar10_benchmark/
+├── configs/              # Configuration files (YAML)
+├── dataloaders/          # Data loading scripts
+├── models/               # Model definitions
+├── utils/                # Utility functions (training, config parsing)
+├── train.py              # Main training script
+├── requirements.txt      # Dependencies
+└── README.md             # This file
 ```
 
+## Setup
+1. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Directory setup**:
+   Ensure you have write permissions for the `./data` directory (for CIFAR-10 download).
+
 ## Usage
+Run the training script with a configuration file:
+```bash
+python train.py --config configs/efficientnet_b0_cifar10.yaml
+```
 
-1. Configure the training parameters in the `configs/efficientnet_b0_cifar10.yaml` file.
-2. Load the CIFAR-10 dataset using the provided dataloader in `dataloaders/cifar10_loader.py`.
-3. Choose a model architecture from the `models` directory and train it using the specified configurations.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
+### Configuration
+Edit or create YAML files in `configs/` to specify model, dataset, and training parameters. Example:
+```yaml
+model: efficientnet-b0
+model_family: efficientnet
+dataset: cifar10
+task: classification
+epochs: 10
+batch_size: 64
+optimizer: adam
+lr: 0.001
+scheduler: null
+pretrained: True
+transfer_learning: true
+```

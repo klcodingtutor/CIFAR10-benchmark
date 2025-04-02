@@ -1,7 +1,10 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_resnet(model_name, pretrained=False, num_classes=10):
+def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
+    if model_family != 'resnet':
+        raise ValueError(f"Unsupported model family: {model_family}")
+    
     resnet_dict = {
         'resnet18': models.resnet18,
         'resnet34': models.resnet34,
@@ -12,9 +15,20 @@ def get_resnet(model_name, pretrained=False, num_classes=10):
         raise ValueError(f"Unsupported ResNet variant: {model_name}")
     
     model = model_fn(pretrained=pretrained)
+    
+    if transfer_learning:
+        for param in model.parameters():
+            param.requires_grad = False
+    
     model.fc = nn.Linear(model.fc.in_features, num_classes)
     return model
 
 if __name__ == "__main__":
-    model = get_resnet('resnet18', pretrained=True)
+    model_name = 'resnet18'
+    model_family = 'resnet'
+    pretrained = True
+    num_classes = 10
+    transfer_learning = True
+
+    model = get_model(model_name, model_family, pretrained, num_classes, transfer_learning)
     print(model)

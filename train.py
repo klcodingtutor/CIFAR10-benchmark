@@ -27,12 +27,23 @@ def main():
         model_name=config['model'],
         model_family=config['model_family'],
         pretrained=config['pretrained'],
+        transfer_learning=config['transfer_learning'],
         num_classes=10
     ).to(device)
     
     # Define loss, optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=config['lr'])
+    if config['optimizer'].lower() == 'adam':
+        optimizer = optim.Adam(model.parameters(), lr=config['lr'])
+    elif config['optimizer'].lower() == 'sgd':
+        optimizer = optim.SGD(model.parameters(), lr=config['lr'], momentum=0.9)
+    else:
+        raise ValueError(f"Unsupported optimizer: {config['optimizer']}")
+    
+    # Optional: Add a learning rate scheduler if specified in the config
+    scheduler = None
+    if config.get('scheduler') == 'step_lr':
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
     
     # Training loop
     best_acc = 0.0
