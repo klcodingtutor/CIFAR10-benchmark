@@ -1,5 +1,5 @@
 model: simple_cnn
-epochs: 50
+epochs: 20
 batch_size: 128
 optimizer: adam
 lr: 0.001

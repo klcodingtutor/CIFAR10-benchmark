@@ -1,7 +1,7 @@
 model: efficientnet-b0
 dataset: face
 task: gender
-epochs: 50
+epochs: 20
 batch_size: 64
 optimizer: adam  # EfficientNet often uses Adam
 lr: 0.001

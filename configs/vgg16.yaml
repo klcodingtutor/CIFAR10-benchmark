@@ -1,5 +1,5 @@
 model: vgg16
-epochs: 100
+epochs: 20
 batch_size: 128
 optimizer: adam
 lr: 0.001
