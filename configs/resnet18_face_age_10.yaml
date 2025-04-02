@@ -1,7 +1,7 @@
 model: resnet18
 dataset: face
 task: age_10
-epochs: 20
+epochs: 10
 batch_size: 64
 optimizer: adam
 lr: 0.001
