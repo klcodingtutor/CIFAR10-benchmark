@@ -13,9 +13,15 @@ def get_efficientnet(model_name, model_family, pretrained, num_classes, transfer
     if not model_fn:
         raise ValueError(f"Unsupported EfficientNet variant: {model_name}")
     
-    model = model_fn(pretrained=pretrained)
+    if pretrained:
+        print("Using pretrained weights.")
+        model = model_fn(pretrained=True)
+    else:
+        print("Not using pretrained weights.")
+        model = model_fn(pretrained=False)
     
     if transfer_learning:
+        print("Freezing model parameters for transfer learning.")
         for param in model.parameters():
             param.requires_grad = False
     
