@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_densenet(model_name='densenet121', num_classes=10, pretrained=False):
+def get_densenet(model_name='densenet121', num_classes=10, pretrained=True):
     if model_name == 'densenet121':
         model = models.densenet121(pretrained=pretrained)
     elif model_name == 'densenet169':

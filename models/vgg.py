@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torchvision.models as models
 
-def get_vgg(model_name='vgg16', num_classes=10, pretrained=False):
+def get_vgg(model_name='vgg16', num_classes=10, pretrained=True):
     if model_name == 'vgg16':
         model = models.vgg16(pretrained=pretrained)
     elif model_name == 'vgg11':
