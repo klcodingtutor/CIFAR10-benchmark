@@ -4,7 +4,9 @@ import torch.optim as optim
 from argparse import ArgumentParser
 from utils.config import load_config
 from utils.train_utils import train_epoch, evaluate, save_checkpoint, load_checkpoint
-from dataloaders.cifar10_loader import get_cifar10_dataloaders, get_face_dataloaders
+from dataloaders.cifar10_loader import get_cifar10_dataloaders
+from dataloaders.get_face_dataloaders import get_face_dataloaders
+
 from models import get_model
 import json
 
