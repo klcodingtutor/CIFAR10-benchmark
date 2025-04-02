@@ -7,13 +7,11 @@ from models import *
 
 def main():
     parser = argparse.ArgumentParser(description='Train a model on CIFAR-10')
-    parser.add_argument('--model', type=str, required=True, help='Model name (e.g., resnet18, efficientnet-b0)')
     parser.add_argument('--config', type=str, required=True, help='Path to config file')
     args = parser.parse_args()
 
     # Load config
     config = load_config(args.config)
-    config['model'] = args.model
 
     # Setup data, model, and logger
     train_loader, val_loader, _ = get_cifar10_dataloaders(batch_size=config['batch_size'])
