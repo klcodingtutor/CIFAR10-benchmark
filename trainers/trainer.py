@@ -1,3 +1,4 @@
+import os
 from utils.metrics import compute_accuracy
 import torch
 import torch.nn as nn
@@ -57,6 +58,8 @@ class Trainer:
             val_acc = self.validate(epoch)
             if val_acc > self.best_acc:
                 self.best_acc = val_acc
+                if not os.path.exists('checkpoints'):
+                    os.makedirs('checkpoints')
                 torch.save(self.model.state_dict(), f'checkpoints/{self.config["model"]}_best.pth')
     
     def validate(self, epoch):
