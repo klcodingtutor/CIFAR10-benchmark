@@ -106,9 +106,9 @@ print(f"label_to_idx for task 3: {train_dataset_task3.label_to_idx}")
 
 # now load the model
 # Determine the number of classes for each task
-num_classes_task1 = len(train_dataset_task1.classes)
-num_classes_task2 = len(train_dataset_task2.classes)
-num_classes_task3 = len(train_dataset_task3.classes)
+num_classes_task1 = len(train_dataset_task1.label_to_idx)
+num_classes_task2 = len(train_dataset_task2.label_to_idx)
+num_classes_task3 = len(train_dataset_task3.label_to_idx)
 
 # Initialize the model using MultiViewAttentionCNN
 model = MultiViewAttentionCNN(
