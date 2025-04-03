@@ -1,11 +1,11 @@
-model: vgg16
-model_family: vgg
+model: swin_t
+model_family: swin
 dataset: face
 task: disease
 epochs: 10
 batch_size: 64
 optimizer: adam
-lr: 0.01
+lr: 0.001
 scheduler: null
 pretrained: false
-transfer_learning: true
+transfer_learning: false
