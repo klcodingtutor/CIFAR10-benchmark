@@ -8,4 +8,4 @@ optimizer: adam
 lr: 0.01
 scheduler: null
 pretrained: true
-transfer_learning: true
+transfer_learning: false

@@ -5,7 +5,7 @@ task: disease
 epochs: 20
 batch_size: 64
 optimizer: adam
-lr: 0.001  # Lower LR often works better for transformers
+lr: 0.01  # Lower LR often works better for transformers
 scheduler: null
 pretrained: true
-transfer_learning: true
+transfer_learning: false
