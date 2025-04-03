@@ -7,5 +7,5 @@ batch_size: 64
 optimizer: adam
 lr: 0.001  # Lower LR can help with modern models
 scheduler: null
-pretrained: false
+pretrained: true
 transfer_learning: false
