@@ -36,7 +36,7 @@ def get_face_dataloaders(data_dir='./data/face', batch_size=64, num_workers=4, t
     if resize != 224:
         # Define transformations
         train_transform = transforms.Compose([
-            transforms.Resize((resize + int(0.1)*resize, resize + int(0.1)*resize)),  # Resize to 110% of target size
+            transforms.Resize((resize + int(0.1*resize), resize + int(0.1*resize))),  # Resize to 110% of target size
             transforms.RandomCrop((resize,resize)),            # Crop to target size with augmentation
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
