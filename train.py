@@ -42,6 +42,15 @@ def main():
     
     # Load configuration again to ensure it's available after setting up logging
     config = load_config(args.config)
+
+    # copy the config file to the checkpoints directory
+    os.makedirs("./checkpoints", exist_ok=True)
+    os.system(f"cp {args.config} ./checkpoints/{os.path.basename(args.config)}")
+    print(f"Copied config file to ./checkpoints/{os.path.basename(args.config)}")
+    # calculate hash
+    import hashlib
+    print(f"Hash of the config file: {hashlib.md5(open(args.config, 'rb').read()).hexdigest()}")
+    
     
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
