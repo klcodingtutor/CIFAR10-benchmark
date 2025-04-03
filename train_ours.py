@@ -119,7 +119,7 @@ model = MultiViewAttentionCNN(
     num_classes_final=num_classes_task3,
     drop_prob=0.5,  # Example dropout probability
     device=device,
-)
+).to(device)
 print(model)
 
 
