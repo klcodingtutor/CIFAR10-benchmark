@@ -11,6 +11,9 @@ from dataloaders.get_face_dataloaders import get_face_dataloaders
 from models import get_model
 import json
 
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def main():
     # Parse command-line arguments
     parser = ArgumentParser(description="Model Benchmarking")
@@ -19,6 +22,19 @@ def main():
     
     # Load configuration
     config = load_config(args.config)
+    
+    # Set up logging to a file
+    log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_best.log"
+    print(f"Logging to {log_file}")
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)  # Create the directory if it doesn't exist
+    
+    # Create the directory if it doesn't exist
+    logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.info("Starting training...")
+
+    # Redirect stdout and stderr to the log file
+    sys.stdout = open(log_file, 'w')
+    sys.stderr = open(log_file, 'w')
     
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
