@@ -8,4 +8,4 @@ optimizer: adam
 lr: 0.001  # Lower LR often works better for transformers
 scheduler: null
 pretrained: true
-transfer_learning: false
+transfer_learning: true
