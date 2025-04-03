@@ -213,7 +213,7 @@ for epoch in range(config['epochs'][0]):
         optimizer_a.zero_grad()
 
         # Forward pass
-        features_a_output, features_b_output, features_c_output, features_a_reshaped_filters, features_b_reshaped_filters, features_c_reshaped_filters = model(inputs, inputs, inputs, return_individual_outputs=True, return_attention_features=False)
+        features_a_output, features_b_output, features_c_output, features_a_reshaped_filters, features_b_reshaped_filters, features_c_reshaped_filters = model(inputs, inputs, inputs, return_individual_outputs=True, return_attention_features=True)
         print(f"Shape of features_a_output: {features_a_output.shape}")
         print(f"Shape of features_b_output: {features_b_output.shape}")
         print(f"Shape of features_c_output: {features_c_output.shape}")
