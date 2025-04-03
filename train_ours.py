@@ -32,10 +32,6 @@ config = {
     "transfer_learning": False,
     "resize": 32
 }
-    
-    
-# Load configuration
-# config = load_config(args.config)
 
 # Set up logging to a file
 log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_training.log"
@@ -55,15 +51,18 @@ logging.info("Starting training...")
 sys.stdout= open(log_file, 'a')
 
 # Load configuration again to ensure it's available after setting up logging
-config = load_config(args.config)
+print("Loading configuration...")
+print(config)
 
-# copy the config file to the checkpoints directory
+save_config_path = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_config.json"
 os.makedirs("./checkpoints", exist_ok=True)
-os.system(f"cp {args.config} ./checkpoints/{os.path.basename(args.config)}")
-print(f"Copied config file to ./checkpoints/{os.path.basename(args.config)}")
+with open(save_config_path, 'w') as f:
+    json.dump(config, f, indent=4)
+    
+print(f"Copied config file to {save_config_path}")
 # calculate hash
 import hashlib
-print(f"Hash of the config file: {hashlib.md5(open(args.config, 'rb').read()).hexdigest()}")
+print(f"Hash of the config file: {hashlib.md5(open(save_config_path, 'rb').read()).hexdigest()}")
 
 
 # Set device
@@ -124,7 +123,7 @@ print(model)
 if config.get('checkpoint'):
     print(f"Loading checkpoint from {config['checkpoint']}")
     loaded_config = config.copy()
-    model, loaded_config = load_checkpoint(model, args.checkpoint, device)
+    model, loaded_config = load_checkpoint(model, config['checkpoint'], device)
     print(f"Loaded checkpoint config: {loaded_config}")
     config = loaded_config
 
