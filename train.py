@@ -24,7 +24,7 @@ def main():
     config = load_config(args.config)
     
     # Set up logging to a file
-    log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_training.log"
+    log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_training.log"
     print(f"Logging to {log_file}")   
     os.makedirs(os.path.dirname(log_file), exist_ok=True)  # Create the directory if it doesn't exist
     
@@ -122,12 +122,12 @@ def main():
                 os.makedirs("./checkpoints")
             
             # Save the model checkpoint under the "checkpoints" directory
-            filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_best.pth"
+            filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_best.pth"
             save_checkpoint(model, config, filepath)
             best_acc_epoch = epoch + 1
             
             # Save epoch information to a JSON file
-            info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_best.json"
+            info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_best.json"
             epoch_info = {
                 "epoch": epoch + 1,
                 "train_loss": train_loss,
@@ -144,12 +144,12 @@ def main():
         # Save best model based on val
         if val_acc > best_acc_val:
             best_acc_val = val_acc
-            filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_val_best.pth"
+            filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_val_best.pth"
             save_checkpoint(model, config, filepath)
             best_acc_val_epoch = epoch + 1
 
             # Save epoch information to a JSON file
-            info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_val_best.json"
+            info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_val_best.json"
             epoch_info = {
                 "epoch": epoch + 1,
                 "train_loss": train_loss,
