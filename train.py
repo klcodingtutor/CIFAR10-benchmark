@@ -33,7 +33,7 @@ def main():
             batch_size=config['batch_size'],
             num_workers=4,
             task=config['task'],
-            resize=get(config, 'resize', 224)  # Use the resize value from config, default to 224
+            resize=config.get('resize', 224)  # Use the resize value from config, default to 224
         )
         num_classes = len(train_dataset.label_to_idx)  # Dynamically set from train_dataset
         print(f"Number of classes for task '{config['task']}': {num_classes}")
