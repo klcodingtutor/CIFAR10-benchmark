@@ -12,7 +12,7 @@ from models import get_model
 import json
 
 import logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def main():
     # Parse command-line arguments
@@ -24,18 +24,19 @@ def main():
     config = load_config(args.config)
     
     # Set up logging to a file
-    log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_best.log"
-    print(f"Logging to {log_file}")
+    log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_training.log"
+    print(f"Logging to {log_file}")   
     os.makedirs(os.path.dirname(log_file), exist_ok=True)  # Create the directory if it doesn't exist
     
-    # Create the directory if it doesn't exist
-    logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    # Configure logging (only once, with a FileHandler)
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    file_handler = logging.FileHandler(log_file, mode='a')  # Append mode
+    file_handler.setLevel(logging.DEBUG)  # Set to DEBUG to capture all messages
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logging.getLogger().addHandler(file_handler)
+    logging.info(f"Logging to {log_file}")
     logging.info("Starting training...")
-
-    # Redirect stdout and stderr to the log file
-    sys.stdout = open(log_file, 'w+')
-    sys.stderr = open(log_file, 'w+')
-
+    
     # Load configuration again to ensure it's available after setting up logging
     config = load_config(args.config)
     
