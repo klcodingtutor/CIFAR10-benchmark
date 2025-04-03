@@ -77,7 +77,8 @@ trainloader_task1, valloader_task1, testloader_task1, train_dataset_task1, val_d
     resize=config.get('resize', 224)  # Use the resize value from config, default to 224
 )
 
-print(f"Number of classes for task 1: {len(train_dataset_task1.classes)}")
+print(f"Number of classes for task 1: {len(train_dataset_task1.label_to_idx)}")
+print(f"label_to_idx for task 1: {train_dataset_task1.label_to_idx}")
 
 # Load dataloaders for task 2
 trainloader_task2, valloader_task2, testloader_task2, train_dataset_task2, val_dataset_task2, test_dataset_task2, df = get_face_dataloaders(
@@ -88,7 +89,8 @@ trainloader_task2, valloader_task2, testloader_task2, train_dataset_task2, val_d
     resize=config.get('resize', 224)  # Use the resize value from config, default to 224
 )
 
-print(f"Number of classes for task 2: {len(train_dataset_task2.classes)}")
+print(f"Number of classes for task 2: {len(train_dataset_task2.label_to_idx)}")
+print(f"label_to_idx for task 2: {train_dataset_task2.label_to_idx}")
 
 # Load dataloaders for task 3
 trainloader_task3, valloader_task3, testloader_task3, train_dataset_task3, val_dataset_task3, test_dataset_task3, df = get_face_dataloaders(
@@ -99,7 +101,8 @@ trainloader_task3, valloader_task3, testloader_task3, train_dataset_task3, val_d
     resize=config.get('resize', 224)  # Use the resize value from config, default to 224
     )
 
-print(f"Number of classes for task 3: {len(train_dataset_task3.classes)}")
+print(f"Number of classes for task 3: {len(train_dataset_task3.label_to_idx)}")
+print(f"label_to_idx for task 3: {train_dataset_task3.label_to_idx}")
 
 # now load the model
 # Determine the number of classes for each task
