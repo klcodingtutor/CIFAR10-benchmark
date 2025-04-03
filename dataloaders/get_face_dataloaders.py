@@ -5,7 +5,7 @@ from PIL import Image
 import os
 import torchvision.transforms as transforms
 
-def get_face_dataloaders(data_dir='./data/face', batch_size=64, num_workers=4, task='gender'):
+def get_face_dataloaders(data_dir='./data/face', batch_size=64, num_workers=4, task='gender', resize=224):
     """
     Load face dataset from CSV for a specific task.
     
@@ -33,19 +33,36 @@ def get_face_dataloaders(data_dir='./data/face', batch_size=64, num_workers=4, t
     train_size = int((1 - val_split) * len(train_df))
     train_df, val_df = train_df.iloc[:train_size], train_df.iloc[train_size:]
 
-    # Define transformations
-    train_transform = transforms.Compose([
-        transforms.Resize(256),                # Resize to 256x256 first
-        transforms.RandomCrop(224),            # Crop to 224x224 with augmentation
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
-    test_transform = transforms.Compose([
-        transforms.Resize(224),                # Resize directly to 224x224
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
+    if resize != 224:
+        # Define transformations
+        train_transform = transforms.Compose([
+            transforms.Resize(resize + int(0.1)*resize),  # Resize to 110% of target size
+            transforms.RandomCrop(resize),            # Crop to target size with augmentation
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+        test_transform = transforms.Compose([
+            transforms.Resize(resize),                # Resize directly to target size
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+    elif resize == 224:
+        # Define transformations
+        train_transform = transforms.Compose([
+            transforms.Resize(256),                # Resize to 256x256 first
+            transforms.RandomCrop(224),            # Crop to 224x224 with augmentation
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+        test_transform = transforms.Compose([
+            transforms.Resize(224),                # Resize directly to 224x224
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])
+    else:
+        raise ValueError("Resize not specified")
 
     # Custom Dataset class
     class CustomDataset(Dataset):
