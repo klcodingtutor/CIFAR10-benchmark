@@ -107,10 +107,37 @@ def get_face_dataloaders(data_dir='./data/face', batch_size=64, num_workers=4, t
 
     # Create datasets
     train_dataset = CustomDataset(train_df, task, data_dir, train_transform)
-    val_dataset = CustomDataset(val_df, task, data_dir, test_transform)
+    val_dataset = CustomDataset(val_df, task, data_dir, train_transform)
     test_dataset = CustomDataset(test_df, task, data_dir, test_transform)
 
+    print(f"Train dataset size: {len(train_dataset)}, transform: {train_transform}")
+    print(f"Validation dataset size: {len(val_dataset)}, transform: {train_transform}")
+    print(f"Test dataset size: {len(test_dataset)}, transform: {test_transform}")
+    
+    print(f"Train dataset label mapping: {train_dataset.label_to_idx}")
+    print(f"Validation dataset label mapping: {val_dataset.label_to_idx}")
+    print(f"Test dataset label mapping: {test_dataset.label_to_idx}")
+
     # Create DataLoaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+
+    # try iter one batch and print size
+    try:
+        for images, labels in train_loader:
+            print(f"Train batch size: {images.size()}, Labels: {labels.size()}")
+            break
+        for images, labels in val_loader:
+            print(f"Validation batch size: {images.size()}, Labels: {labels.size()}")
+            break
+        for images, labels in test_loader:
+            print(f"Test batch size: {images.size()}, Labels: {labels.size()}")
+            break
+    except Exception as e:
+        print(f"Error during DataLoader iteration: {e}")
+
+    # reset
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
