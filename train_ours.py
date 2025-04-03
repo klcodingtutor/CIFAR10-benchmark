@@ -23,7 +23,7 @@ config = {
     "task1": "gender",
     "task2": "age_10",
     "task3": "disease",
-    "epochs": 100,
+    "epochs": [5, 5, 5, 5],
     "batch_size": 64,
     "optimizer": "adam",
     "lr": 0.001,
@@ -165,4 +165,59 @@ elif config['optimizer'].lower() == 'sgd':
 else:
     raise ValueError(f"Unsupported optimizer: {config['optimizer']}")
 
-# 
+
+    # def forward(self, view_a, view_b, view_c, return_individual_outputs=False, return_attention_features=False):
+    #     features_a_reshaped_filters, features_a_x, features_a_output = self.cnn_view_a(view_a)
+    #     features_b_reshaped_filters, features_b_x, features_b_output = self.cnn_view_b(view_b)
+    #     features_c_reshaped_filters, features_c_x, features_c_output = self.cnn_view_c(view_c)
+
+    #     if return_individual_outputs:
+    #         if return_attention_features:
+    #             return features_a_output, features_b_output, features_c_output, features_a_reshaped_filters, features_b_reshaped_filters, features_c_reshaped_filters
+    #         else:
+    #             return features_a_output, features_b_output, features_c_output
+    #     else:
+    #         # print(f"Shape of combined_features: {features_a_reshaped_filters.shape}, {features_b_reshaped_filters.shape}, {features_c_reshaped_filters.shape}")
+    #         combined_features = torch.cat((features_a_reshaped_filters, features_b_reshaped_filters, features_c_reshaped_filters), dim=1)
+    #         # print(f"Shape of combined_features after cat: {features_a_reshaped_filters.shape}, {features_b_reshaped_filters.shape}, {features_c_reshaped_filters.shape}")
+    #         combined_features = combined_features.reshape(combined_features.size(0), -1)
+    #         # print(f"Shape of combined_features after reshape: {features_a_reshaped_filters.shape}, {features_b_reshaped_filters.shape}, {features_c_reshaped_filters.shape}")
+    #         fused_output = self.fusion_layers(combined_features)
+    #         if return_attention_features:
+    #             return fused_output, features_a_reshaped_filters, features_b_reshaped_filters, features_c_reshaped_filters
+    #         else:
+    #             return fused_output
+
+# first train task 1
+print("Training task 1...")
+# currently all 3 views are the same
+# so just loop through the first one
+train_loader = trainloader_task1
+val_loader = valloader_task1
+train_dataset = train_dataset_task1
+
+# Set model to training mode
+model.train()
+# Loop through epochs
+best_acc = 0.0
+best_acc_epoch = -1
+best_acc_val = 0.0
+best_acc_val_epoch = -1
+for epoch in range(config['epochs'][0]):
+    print(f"\nEpoch {epoch+1}/{config['epochs']}")
+
+
+# loop through the first dataloader
+    for inputs, labels in train_loader:
+        inputs, labels = inputs.to(device), labels.to(device)
+        optimizer_a.zero_grad()
+
+        # Forward pass
+        features_a_output, features_b_output, features_c_output, features_a_reshaped_filters, features_b_reshaped_filters, features_c_reshaped_filters = model(inputs, inputs, inputs, return_individual_outputs=True, return_attention_features=False)
+        print(f"Shape of features_a_output: {features_a_output.shape}")
+        print(f"Shape of features_b_output: {features_b_output.shape}")
+        print(f"Shape of features_c_output: {features_c_output.shape}")
+        print(f"Shape of features_a_reshaped_filters: {features_a_reshaped_filters.shape}")
+        print(f"Shape of features_b_reshaped_filters: {features_b_reshaped_filters.shape}")
+        print(f"Shape of features_c_reshaped_filters: {features_c_reshaped_filters.shape}")
+        break
