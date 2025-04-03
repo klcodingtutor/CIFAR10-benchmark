@@ -33,8 +33,8 @@ def main():
     logging.info("Starting training...")
 
     # Redirect stdout and stderr to the log file
-    sys.stdout = open(log_file, 'w')
-    sys.stderr = open(log_file, 'w')
+    sys.stdout = open(log_file, 'w+')
+    sys.stderr = open(log_file, 'w+')
 
     # Load configuration again to ensure it's available after setting up logging
     config = load_config(args.config)
