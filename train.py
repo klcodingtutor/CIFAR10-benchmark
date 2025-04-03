@@ -36,6 +36,9 @@ def main():
     logging.getLogger().addHandler(file_handler)
     logging.info(f"Logging to {log_file}")
     logging.info("Starting training...")
+
+    # redirects normal print statements to the log file
+    sys.stdout= open(log_file, 'a')
     
     # Load configuration again to ensure it's available after setting up logging
     config = load_config(args.config)
@@ -165,6 +168,8 @@ def main():
     
     print(f"Training completed. Best Test Acc: {best_acc:.2f}% at epoch {best_acc_epoch}, "
           f"Best Val Acc: {best_acc_val:.2f}% at epoch {best_acc_val_epoch}")
+
+    sys.stdout.close()
 
 if __name__ == "__main__":
     main()
