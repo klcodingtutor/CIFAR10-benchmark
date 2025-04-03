@@ -1,0 +1,11 @@
+model: mobilenet_v3_small
+model_family: mobilenet
+dataset: face
+task: disease
+epochs: 20
+batch_size: 64
+optimizer: adam
+lr: 0.01
+scheduler: null
+pretrained: true
+transfer_learning: false
