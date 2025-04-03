@@ -8,12 +8,22 @@ from .swin import get_swin
 from .convnext import get_convnext
 from .efficientnetv2 import get_efficientnetv2
 from .shufflenet import get_shufflenet
+from .resnet_32_input import get_resnet_32_input
+
 from utils.decorator import print_args
 
 @print_args
 def get_model(model_name, model_family, pretrained, num_classes, transfer_learning):
     if model_family == 'resnet':
         model = get_resnet(
+            model_name=model_name,
+            model_family=model_family,
+            pretrained=pretrained,
+            num_classes=num_classes,
+            transfer_learning=transfer_learning
+        )
+    elif model_family == 'resnet_32_input':
+        model = get_resnet_32_input(
             model_name=model_name,
             model_family=model_family,
             pretrained=pretrained,

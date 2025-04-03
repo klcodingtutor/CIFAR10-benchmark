@@ -1,0 +1,12 @@
+model: resnet18_32_input
+model_family: resnet_32_input
+dataset: face
+task: disease
+epochs: 20
+batch_size: 64
+optimizer: adam
+lr: 0.01
+scheduler: null
+pretrained: false
+transfer_learning: false
+resize: 32
