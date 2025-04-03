@@ -104,7 +104,7 @@ def main():
             best_acc_epoch = epoch + 1
             
             # Save epoch information to a JSON file
-            info_filepath = f"{config['model']}_{config['dataset']}_{config['task']}_best.json"
+            info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_best.json"
             epoch_info = {
                 "epoch": epoch + 1,
                 "train_loss": train_loss,
@@ -126,7 +126,7 @@ def main():
             best_acc_val_epoch = epoch + 1
 
             # Save epoch information to a JSON file
-            info_filepath = f"{config['model']}_{config['dataset']}_{config['task']}_val_best.json"
+            info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_val_best.json"
             epoch_info = {
                 "epoch": epoch + 1,
                 "train_loss": train_loss,
