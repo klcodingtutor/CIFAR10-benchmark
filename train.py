@@ -117,9 +117,9 @@ def main():
         train_loss, train_acc, val_loss, val_acc = train_epoch(model, trainloader, valloader, criterion, optimizer, device)
         test_loss, test_acc = evaluate(model, testloader, criterion, device)
         
-        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
-        print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
-        print(f"Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.2f}%")
+        print(f"Epoch {epoch+1}/{config['epochs']} Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
+        print(f"Epoch {epoch+1}/{config['epochs']} Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
+        print(f"Epoch {epoch+1}/{config['epochs']} Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.2f}%")
         
         # -----------------------------------------------------------------------------------
         # TODO:
