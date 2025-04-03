@@ -70,122 +70,96 @@ print(f"Hash of the config file: {hashlib.md5(open(args.config, 'rb').read()).he
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load dataloaders for task 1
-config['task'] = config['task1']
-
-trainloader, valloader, testloader, train_dataset, val_dataset, test_dataset, df = get_face_dataloaders(
+trainloader_task1, valloader_task1, testloader_task1, train_dataset_task1, val_dataset_task1, test_dataset_task1, df = get_face_dataloaders(
     data_dir='./data/face',
     batch_size=config['batch_size'],
     num_workers=4,
-    task=config['task'],
+    task=config['task1'],
     resize=config.get('resize', 224)  # Use the resize value from config, default to 224
 )
 
-print(f"Number of classes for task '{config['task']}': {num_classes}")
+print(f"Number of classes for task 1: {len(train_dataset_task1.classes)}")
 
-# # Load model
-# model = get_model(
-#     model_name=config['model'],
-#     model_family=config['model_family'],
-#     pretrained=config['pretrained'],
-#     transfer_learning=config['transfer_learning'],
-#     num_classes=num_classes
-# ).to(device)
+# Load dataloaders for task 2
+trainloader_task2, valloader_task2, testloader_task2, train_dataset_task2, val_dataset_task2, test_dataset_task2, df = get_face_dataloaders(
+    data_dir='./data/face',
+    batch_size=config['batch_size'],
+    num_workers=4,
+    task=config['task2'],
+    resize=config.get('resize', 224)  # Use the resize value from config, default to 224
+)
 
-# # # Load checkpoint if provided from config
-# # if config.get('checkpoint'):
-# #     print(f"Loading checkpoint from {config['checkpoint']}")
-# #     loaded_config = config.copy()
-# #     model, loaded_config = load_checkpoint(model, args.checkpoint, device)
-# #     print(f"Loaded checkpoint config: {loaded_config}")
-# #     config = loaded_config
+print(f"Number of classes for task 2: {len(train_dataset_task2.classes)}")
 
-# # Define loss, optimizer
-# criterion = nn.CrossEntropyLoss()
-# if config['optimizer'].lower() == 'adam':
-#     optimizer = optim.Adam(model.parameters(), lr=config['lr'])
-# elif config['optimizer'].lower() == 'sgd':
-#     optimizer = optim.SGD(model.parameters(), lr=config['lr'], momentum=0.9)
-# else:
-#     raise ValueError(f"Unsupported optimizer: {config['optimizer']}")
+# Load dataloaders for task 3
+trainloader_task3, valloader_task3, testloader_task3, train_dataset_task3, val_dataset_task3, test_dataset_task3, df = get_face_dataloaders(
+    data_dir='./data/face',
+    batch_size=config['batch_size'],
+    num_workers=4,
+    task=config['task3'],
+    resize=config.get('resize', 224)  # Use the resize value from config, default to 224
+    )
 
-# # Optional: Add a learning rate scheduler if specified in the config
-# scheduler = None
-# if config.get('scheduler') == 'step_lr':
-#     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
+print(f"Number of classes for task 3: {len(train_dataset_task3.classes)}")
 
-# # Training loop
-# # -----------------------------------------------------------------------------------
-# # TODO:
-# best_acc = 0.0
-# best_acc_epoch = -1
-# best_acc_val = 0.0
-# best_acc_val_epoch = -1
-# # -----------------------------------------------------------------------------------
-# for epoch in range(config['epochs']):
-#     print(f"\nEpoch {epoch+1}/{config['epochs']}")
+# now load the model
+# Determine the number of classes for each task
+num_classes_task1 = len(train_dataset_task1.classes)
+num_classes_task2 = len(train_dataset_task2.classes)
+num_classes_task3 = len(train_dataset_task3.classes)
+
+# Initialize the model using MultiViewAttentionCNN
+model = MultiViewAttentionCNN(
+    image_size=config['resize'],
+    image_depth=3,  # Assuming RGB images
+    num_classes_list=[num_classes_task1, num_classes_task2, num_classes_task3],
+    num_classes_final=num_classes_task3,
+    drop_prob=0.5,  # Example dropout probability
+    device=device,
+)
+print(model)
+
+
+# Load checkpoint if provided from config
+if config.get('checkpoint'):
+    print(f"Loading checkpoint from {config['checkpoint']}")
+    loaded_config = config.copy()
+    model, loaded_config = load_checkpoint(model, args.checkpoint, device)
+    print(f"Loaded checkpoint config: {loaded_config}")
+    config = loaded_config
+
+# Define loss, optimizer
+criterion_a = nn.CrossEntropyLoss()
+criterion_b = nn.CrossEntropyLoss()
+criterion_c = nn.CrossEntropyLoss()
+criterion_c_fusion = nn.CrossEntropyLoss()
+
+if config['optimizer'].lower() == 'adam':
     
-#     train_loss, train_acc, val_loss, val_acc = train_epoch(model, trainloader, valloader, criterion, optimizer, device)
-#     test_loss, test_acc = evaluate(model, testloader, criterion, device)
+    optimizer_a = optim.Adam(model.cnn_view_a.parameters(), lr=config['lr'])
+    optimizer_b = optim.Adam(model.cnn_view_b.parameters(), lr=config['lr'])
+    optimizer_c = optim.Adam(model.cnn_view_c.parameters(), lr=config['lr'])
     
-#     print(f"Epoch {epoch+1}/{config['epochs']} Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
-#     print(f"Epoch {epoch+1}/{config['epochs']} Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
-#     print(f"Epoch {epoch+1}/{config['epochs']} Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.2f}%")
+    # last step will train c and fusion together with ab frozen
+    optimizer_c_fusion = optim.Adam(
+        list(model.cnn_view_c.parameters()) + list(model.fusion_layers.parameters()),
+        lr=config['lr']
+    )
     
-#     # -----------------------------------------------------------------------------------
-#     # TODO:
-#     # Save best model based on test
-#     if test_acc > best_acc:
-#         best_acc = test_acc
-        
-#         if not os.path.exists("./checkpoints"):
-#             os.makedirs("./checkpoints")
-        
-#         # Save the model checkpoint under the "checkpoints" directory
-#         filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_best.pth"
-#         save_checkpoint(model, config, filepath)
-#         best_acc_epoch = epoch + 1
-        
-#         # Save epoch information to a JSON file
-#         info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_best.json"
-#         epoch_info = {
-#             "epoch": epoch + 1,
-#             "train_loss": train_loss,
-#             "train_acc": train_acc,
-#             "val_loss": val_loss,
-#             "val_acc": val_acc,
-#             "test_loss": test_loss,
-#             "test_acc": test_acc
-#         }
-#         with open(info_filepath, "w") as f:
-#             json.dump(epoch_info, f, indent=4)
-#     # -----------------------------------------------------------------------------------
+elif config['optimizer'].lower() == 'sgd':
+    # optimizer_a = optim.SGD(model.cnn_view_a.parameters(), lr=config['lr'], momentum=0.9)
 
-#     # Save best model based on val
-#     if val_acc > best_acc_val:
-#         best_acc_val = val_acc
-#         filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_val_best.pth"
-#         save_checkpoint(model, config, filepath)
-#         best_acc_val_epoch = epoch + 1
+    optimizer_a = optim.SGD(model.cnn_view_a.parameters(), lr=config['lr'], momentum=0.9)
+    optimizer_b = optim.SGD(model.cnn_view_b.parameters(), lr=config['lr'], momentum=0.9)
+    optimizer_c = optim.SGD(model.cnn_view_c.parameters(), lr=config['lr'], momentum=0.9)
 
-#         # Save epoch information to a JSON file
-#         info_filepath = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_val_best.json"
-#         epoch_info = {
-#             "epoch": epoch + 1,
-#             "train_loss": train_loss,
-#             "train_acc": train_acc,
-#             "val_loss": val_loss,
-#             "val_acc": val_acc,
-#             "test_loss": test_loss,
-#             "test_acc": test_acc
-#         }
-#         with open(info_filepath, "w") as f:
-#             json.dump(epoch_info, f, indent=4)
-    
-#     # Step the scheduler if it exists
-#     if scheduler:
-#         scheduler.step()
+    # last step will train c and fusion together with ab frozen
+    optimizer_c_fusion = optim.SGD(
+        list(model.cnn_view_c.parameters()) + list(model.fusion_layers.parameters()),
+        lr=config['lr'],
+        momentum=0.9
+    )
+else:
+    raise ValueError(f"Unsupported optimizer: {config['optimizer']}")
 
-# print(f"Training completed. Best Test Acc: {best_acc:.2f}% at epoch {best_acc_epoch}, "
-#         f"Best Val Acc: {best_acc_val:.2f}% at epoch {best_acc_val_epoch}")
-
-# sys.stdout.close()
+# 
