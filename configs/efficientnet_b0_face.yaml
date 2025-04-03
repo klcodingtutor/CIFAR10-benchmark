@@ -2,7 +2,7 @@ model: efficientnet-b0
 model_family: efficientnet
 dataset: face
 task: disease
-epochs: 10
+epochs: 20
 batch_size: 64
 optimizer: adam
 lr: 0.01

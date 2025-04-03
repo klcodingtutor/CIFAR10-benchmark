@@ -2,7 +2,7 @@ model: vgg16
 model_family: vgg
 dataset: face
 task: disease
-epochs: 10
+epochs: 20
 batch_size: 64
 optimizer: adam
 lr: 0.01
