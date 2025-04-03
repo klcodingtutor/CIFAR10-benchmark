@@ -1,3 +1,4 @@
+from models.MultiViewAttentionCNN import MultiViewAttentionCNN
 import os
 import torch
 import torch.nn as nn
