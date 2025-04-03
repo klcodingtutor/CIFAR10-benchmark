@@ -23,7 +23,6 @@ config = {
     "task1": "gender",
     "task2": "age_10",
     "task3": "disease",
-    "task": "gender, age_10, disease",
     "epochs": 100,
     "batch_size": 64,
     "optimizer": "adam",
@@ -33,6 +32,7 @@ config = {
     "transfer_learning": False,
     "resize": 32
 }
+config['task'] = "__".join([config['task1'], config['task2'], config['task3']])
 
 # Set up logging to a file
 log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_training.log"
