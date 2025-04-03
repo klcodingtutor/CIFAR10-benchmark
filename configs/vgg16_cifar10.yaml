@@ -2,7 +2,7 @@ model: vgg16
 model_family: vgg
 dataset: cifar10
 task: classification
-epochs: 1
+epochs: 10
 batch_size: 64
 optimizer: adam
 lr: 0.01

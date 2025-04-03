@@ -2,7 +2,7 @@ model: vit_b_16
 model_family: vit
 dataset: cifar10
 task: classification
-epochs: 1
+epochs: 10
 batch_size: 64
 optimizer: adam
 lr: 0.001  # Lower LR often works better for transformers

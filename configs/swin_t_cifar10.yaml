@@ -2,7 +2,7 @@ model: swin_t
 model_family: swin
 dataset: cifar10
 task: classification
-epochs: 1
+epochs: 10
 batch_size: 64
 optimizer: adam
 lr: 0.001

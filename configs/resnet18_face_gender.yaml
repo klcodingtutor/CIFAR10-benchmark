@@ -2,7 +2,7 @@ model: resnet18
 model_family: resnet
 dataset: face
 task: disease
-epochs: 1
+epochs: 10
 batch_size: 64
 optimizer: adam
 lr: 0.001
