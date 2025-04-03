@@ -28,9 +28,6 @@ def main():
     print(f"Logging to {log_file}")
     os.makedirs(os.path.dirname(log_file), exist_ok=True)  # Create the directory if it doesn't exist
     
-    # Load configuration again to ensure it's available after setting up logging
-    config = load_config(args.config)
-    
     # Create the directory if it doesn't exist
     logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.info("Starting training...")
@@ -38,6 +35,9 @@ def main():
     # Redirect stdout and stderr to the log file
     sys.stdout = open(log_file, 'w')
     sys.stderr = open(log_file, 'w')
+
+    # Load configuration again to ensure it's available after setting up logging
+    config = load_config(args.config)
     
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
