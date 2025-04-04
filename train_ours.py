@@ -109,6 +109,16 @@ elif config['optimizer'].lower() == 'sgd':
 else:
     raise ValueError(f"Unsupported optimizer: {config['optimizer']}")
 
+# Define learning rate scheduler if specified
+scheduler = None
+# if config['scheduler']:
+#     if config['scheduler'].lower() == 'step':
+#         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+#     elif config['scheduler'].lower() == 'cosine':
+#         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config['epochs'])
+#     else:
+#         raise ValueError(f"Unsupported scheduler: {config['scheduler']}")
+
 # Training loop
 # -----------------------------------------------------------------------------------
 # TODO:
