@@ -3,10 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from utils.decorator import print_args
 
-class AttentionMobileNetShallow_s(nn.Module):
+class AttentionMobileNetShallow_xs(nn.Module):
     @print_args
     def __init__(self, input_channels, n_classes, input_size=224, use_attention=False, attention_channels=64):
-        super(AttentionMobileNetShallow_s, self).__init__()
+        super(AttentionMobileNetShallow_xs, self).__init__()
         self.input_channels = input_channels
         self.n_classes = n_classes
         self.input_size = input_size
