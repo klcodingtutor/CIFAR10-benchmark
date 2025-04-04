@@ -21,7 +21,7 @@ config = {
     "model_family": "AttentionMobileNetShallow",
     "dataset": "face",
     "task": "disease",
-    "epochs": 20,
+    "epochs": 50,
     "batch_size": 64,
     "optimizer": "adam",
     "lr": 0.001,
@@ -60,6 +60,11 @@ with open(save_config_path, 'w') as f:
 print(f"Copied config file to {save_config_path}")
 # calculate hash
 import hashlib
+from torchsummary import summary
+from utils.model_utils import get_actual_size
+from utils.train_utils import train_with_CIFAR10
+import cv2
+import numpy as np
 print(f"Hash of the config file: {hashlib.md5(open(save_config_path, 'rb').read()).hexdigest()}")
 
 
@@ -193,5 +198,63 @@ for epoch in range(config['epochs']):
 
 print(f"Training completed. Best Test Acc: {best_acc:.2f}% at epoch {best_acc_epoch}, "
         f"Best Val Acc: {best_acc_val:.2f}% at epoch {best_acc_val_epoch}")
+# Function to visualize attention maps
+def visualize_attention_maps(model, dataloader):
+    model.eval()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    
+    # Get the first batch and select 5 random images
+    data_iter = iter(dataloader)
+    inputs, labels = next(data_iter)
+    inputs, labels = inputs.to(device), labels.to(device)
+    indices = torch.randperm(len(inputs))[:5]
+    inputs = inputs[indices]
+    labels = labels[indices]
+    
+    # Get attention maps
+    with torch.no_grad():
+        _, att_map, x_att = model(inputs, return_att_map=True)
+        att_map = att_map.cpu().numpy()
+        x_att = x_att.cpu().numpy()
+        inputs = inputs.cpu().numpy()
+        labels = labels.cpu().numpy()
 
+    # Plot and show attention maps
+    import matplotlib.pyplot as plt
+    
+    fig, axes = plt.subplots(5, 4, figsize=(10, 15))
+    for i in range(5):
+        # Original image
+        axes[i, 0].imshow(np.transpose(inputs[i], (1, 2, 0)))
+        axes[i, 0].set_title(f"Original Image - Label: {labels[i]}")
+        axes[i, 0].axis('off')
+        
+        # Attention map overlay
+        att_map_reshaped = cv2.resize(att_map[i], (32, 32))
+        axes[i, 1].imshow(att_map_reshaped, cmap='hot', interpolation='nearest', alpha=0.6)
+        axes[i, 1].imshow(np.transpose(inputs[i], (1, 2, 0)), alpha=0.4)
+        axes[i, 1].set_title("Attention Map Overlay")
+        axes[i, 1].axis('off')
+        
+        # Attention output mean over channels
+        x_att_cur = np.mean(x_att[i, :, :, :], axis=0)
+        x_att_cur_meaned_channels = cv2.resize(x_att_cur, (32, 32))
+        x_att_cur_meaned_channels = cv2.normalize(x_att_cur_meaned_channels, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
+        axes[i, 2].imshow(x_att_cur_meaned_channels, cmap='hot', interpolation='nearest', alpha=0.6)
+        axes[i, 2].imshow(np.transpose(inputs[i], (1, 2, 0)), alpha=0.4)
+        axes[i, 2].set_title("Attention Output Overlay (Mean over channels)")
+        axes[i, 2].axis('off')
+        
+        # Attention output mean visualization
+        axes[i, 3].imshow(x_att_cur_meaned_channels, cmap='hot', interpolation='nearest', alpha=1)
+        axes[i, 3].set_title("Attention Output (Mean over channels)")
+        axes[i, 3].axis('off')
+        
+    plt.tight_layout()
+    plt.show()
+
+# Visualize attention maps for train and test loaders
+visualize_attention_maps(model, train_loader)
+visualize_attention_maps(model, test_loader)
 sys.stdout.close()
