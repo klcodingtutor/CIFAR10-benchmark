@@ -1,3 +1,7 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 class AttentionMobileNetShallow(nn.Module):
     def __init__(self, input_channels, n_classes, input_size=224, use_attention=False, attention_channels=64):
         super(AttentionMobileNetShallow, self).__init__()
