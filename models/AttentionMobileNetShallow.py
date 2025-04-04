@@ -38,38 +38,42 @@ class AttentionMobileNetShallow(nn.Module):
                 nn.ReLU(inplace=True),
             )
 
-        # Main model architecture (224x224 input)
-        self.model = nn.Sequential(
-            conv_batch_norm(self.attention_channels if self.use_attention else input_channels, 32, 2),
-            conv_depth_wise(32, 64, 1),
-            conv_depth_wise(64, 128, 2),
-            conv_depth_wise(128, 128, 1),
-            conv_depth_wise(128, 256, 2),
-            conv_depth_wise(256, 256, 1),
-            conv_depth_wise(256, 512, 2),
-            conv_depth_wise(512, 512, 1),
-            conv_depth_wise(512, 512, 1),
-            conv_depth_wise(512, 512, 1),
-            conv_depth_wise(512, 512, 1),
-            conv_depth_wise(512, 512, 1),
-            conv_depth_wise(512, 1024, 2),
-            conv_depth_wise(1024, 1024, 1),
-            nn.AdaptiveAvgPool2d(1)
-        )
-        
-        # Modified model for 32x32 inputs
-        self.model_32_input = nn.Sequential(
-            conv_batch_norm(self.attention_channels if self.use_attention else input_channels, 32, 1),
-            conv_depth_wise(32, 64, 1),
-            conv_depth_wise(64, 128, 2),
-            conv_depth_wise(128, 256, 1),
-            conv_depth_wise(256, 512, 2),
-            conv_depth_wise(512, 512, 1),
-            conv_depth_wise(512, 512, 1),
-            conv_depth_wise(512, 1024, 2),
-            nn.AdaptiveAvgPool2d(1)
-        )
-                    
+        if self.input_size == 224:
+
+            # Main model architecture (224x224 input)
+            self.model = nn.Sequential(
+                conv_batch_norm(self.attention_channels if self.use_attention else input_channels, 32, 2),
+                conv_depth_wise(32, 64, 1),
+                conv_depth_wise(64, 128, 2),
+                conv_depth_wise(128, 128, 1),
+                conv_depth_wise(128, 256, 2),
+                conv_depth_wise(256, 256, 1),
+                conv_depth_wise(256, 512, 2),
+                conv_depth_wise(512, 512, 1),
+                conv_depth_wise(512, 512, 1),
+                conv_depth_wise(512, 512, 1),
+                conv_depth_wise(512, 512, 1),
+                conv_depth_wise(512, 512, 1),
+                conv_depth_wise(512, 1024, 2),
+                conv_depth_wise(1024, 1024, 1),
+                nn.AdaptiveAvgPool2d(1)
+            )
+        elif self.input_size == 32:
+            # Modified model for 32x32 inputs
+            self.model = nn.Sequential(
+                conv_batch_norm(self.attention_channels if self.use_attention else input_channels, 32, 1),
+                conv_depth_wise(32, 64, 1),
+                conv_depth_wise(64, 128, 2),
+                conv_depth_wise(128, 256, 1),
+                conv_depth_wise(256, 512, 2),
+                conv_depth_wise(512, 512, 1),
+                conv_depth_wise(512, 512, 1),
+                conv_depth_wise(512, 1024, 2),
+                nn.AdaptiveAvgPool2d(1)
+            )
+        else:
+            raise ValueError("Input size must be either 32 or 224")
+                        
         self.fc = nn.Linear(1024, n_classes)
 
     
@@ -86,18 +90,17 @@ class AttentionMobileNetShallow(nn.Module):
             # x = self.apply_attention(x)
             x_att, att_map = self.apply_attention(x)
             x = x + self.scale * x_att  # Residual connection
-        
-        if self.input_size == 32:
-            x = self.model_32_input(x)
-        elif self.input_size == 224:
-            x = self.model(x)
         else:
-            raise ValueError("Input size must be either 32 or 224")
+            att_map = None
+            x_att = None
+        # now pass x through the model
+        
+        x = self.model(x)
         
         x = x.view(-1, 1024)
         x = self.fc(x)
+
         if return_att_map:
             return x, att_map, x_att
         else:
             return x
-    
