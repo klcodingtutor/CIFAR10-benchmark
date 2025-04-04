@@ -61,7 +61,6 @@ print(f"Copied config file to {save_config_path}")
 # calculate hash
 import hashlib
 from utils.model_utils import get_actual_size
-from utils.train_utils import train_with_CIFAR10
 import cv2
 import numpy as np
 print(f"Hash of the config file: {hashlib.md5(open(save_config_path, 'rb').read()).hexdigest()}")
