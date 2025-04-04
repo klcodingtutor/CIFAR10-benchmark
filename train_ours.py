@@ -60,7 +60,6 @@ with open(save_config_path, 'w') as f:
 print(f"Copied config file to {save_config_path}")
 # calculate hash
 import hashlib
-from torchsummary import summary
 from utils.model_utils import get_actual_size
 from utils.train_utils import train_with_CIFAR10
 import cv2
