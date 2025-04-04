@@ -31,7 +31,14 @@ def get_face_dataloaders(data_dir='./data/face', batch_size=64, num_workers=4, t
     # Create a validation split from train (e.g., 10%)
     val_split = 0.1
     train_size = int((1 - val_split) * len(train_df))
-    train_df, val_df = train_df.iloc[:train_size], train_df.iloc[train_size:]
+    
+    # add shuffle here with random seed 3407
+    train_df = train_df.sample(frac=1, random_state=3407).reset_index(drop=True)
+    val_df = train_df.iloc[train_size:]
+    train_df = train_df.iloc[:train_size]
+    print(f"Train size: {len(train_df)}, Validation size: {len(val_df)}, Test size: {len(test_df)}")
+
+    
 
     if resize != 224:
         # Define transformations
