@@ -55,17 +55,13 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         self.not_trained_models = not_trained_models
         self.n_classes = n_classes
 
-        # Fusion layer, get from each linear layer of the models
-        pretrained_output_size = sum(model.fc.in_features for model in pretrained_models)
-        not_trained_output_size = sum(model.fc.in_features for model in not_trained_models)
-        # self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
+        # Use feature addition for the fusion layer
+        pretrained_output_size = pretrained_models[0].fc.in_features
         self.fusion_layer = nn.Sequential(
-            nn.Linear(pretrained_output_size + not_trained_output_size, 1024),
             nn.ReLU(),
-            nn.Linear(1024, 512),
-            nn.ReLU(),
-            nn.Linear(512, n_classes)
+            nn.Linear(pretrained_output_size, n_classes),
         )
+        
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
@@ -75,10 +71,10 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         # Clone the input tensor to avoid modifying it during the forward pass
         x_input = x.clone()
         # Initialize tensors for latent features and attention maps
-        pretrained_latents = None
-        not_trained_latents = None
-        pretrained_att_maps = None
-        not_trained_att_maps = None
+        pretrained_latents = []
+        not_trained_latents = []
+        pretrained_att_maps = []
+        not_trained_att_maps = []
 
         for i, model in enumerate(self.pretrained_models):
             x = x_input.clone().to(device)
@@ -87,29 +83,34 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
                 pretrained_latents = latent
                 pretrained_att_maps = att_map
             else:
-                pretrained_latents = torch.cat((pretrained_latents, latent), dim=1)
-                pretrained_att_maps = torch.cat((pretrained_att_maps, att_map), dim=1)
+                pretrained_latents.append(latent)
+                pretrained_att_maps.append(att_map)
         
         for i, model in enumerate(self.not_trained_models):
             x = x_input.clone().to(device)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
             if i == 0:
-                not_trained_latents = latent
-                not_trained_att_maps = att_map
+                not_trained_latents.append(latent)
+                not_trained_att_maps.append(att_map)
             else:
-                not_trained_latents = torch.cat((not_trained_latents, latent), dim=1)
-                not_trained_att_maps = torch.cat((not_trained_att_maps, att_map), dim=1)
+                not_trained_latents.append(latent)
+                not_trained_att_maps.append(att_map)
         
-        # Concatenate the latent features
+        # Addition the latent features
         # both exsit
         if pretrained_latents is not None and not_trained_latents is not None:
-            latent = torch.cat((pretrained_latents, not_trained_latents), dim=1).to(device)
+            # summation over all
+            pretrained_latents = torch.stack(pretrained_latents, dim=0).sum(dim=0)
+            not_trained_latents = torch.stack(not_trained_latents, dim=0).sum(dim=0)
+            latent = pretrained_latents + not_trained_latents
         # only pretrained exist
         elif pretrained_latents is not None:
-            latent = pretrained_latents.to(device)
+            pretrained_latents = torch.stack(pretrained_latents, dim=0).sum(dim=0)
+            latent = pretrained_latents
         # only not trained exist
         elif not_trained_latents is not None:
-            latent = not_trained_latents.to(device)
+            not_trained_latents = torch.stack(not_trained_latents, dim=0).sum(dim=0)
+            latent = not_trained_latents
         # neither exist
         else:
             raise ValueError("Both pretrained_latents and not_trained_latents are None. Check your models.")
