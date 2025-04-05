@@ -59,7 +59,7 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         num_features = len(pretrained_models) + len(not_trained_models)  # Total number of feature sources
 
         # Define the attention-based fusion layer
-        self.fusion = nn.Sequential(
+        self.fusion_layer = nn.Sequential(
             nn.Linear(feature_dim * num_features, feature_dim),  # Project concatenated features
             nn.ReLU(),
             nn.Linear(feature_dim, num_features),  # Compute attention scores
@@ -111,7 +111,7 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         # Attention-based fusion
         flat_latents = latents.view(batch_size, -1)  # (batch_size, num_features * feature_dim)
         print(f"flat_latents.shape: {flat_latents}]")
-        attn_scores = self.fusion(flat_latents)  # (batch_size, num_features)
+        attn_scores = self.fusion_layer(flat_latents)  # (batch_size, num_features)
         print(f"attn_scores.shape: {attn_scores}]")
         attn_weights = F.softmax(attn_scores, dim=1).unsqueeze(-1)  # (batch_size, num_features, 1)
         print(f"attn_weights.shape: {attn_weights}]")
@@ -155,10 +155,16 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         # Freeze the fusion layer
         for param in self.fusion_layer.parameters():
             param.requires_grad = False
+        # Freeze the classifier layer
+        for param in self.classifier.parameters():
+            param.requires_grad = False
 
     def unfreeze_fusion_layer(self):
         # Unfreeze the fusion layer
         for param in self.fusion_layer.parameters():
+            param.requires_grad = True
+        # Unfreeze the classifier layer
+        for param in self.classifier.parameters():
             param.requires_grad = True
 
     def freeze_all(self):
