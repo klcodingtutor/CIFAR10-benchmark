@@ -82,13 +82,14 @@ print(f"Hash of the config file: {hashlib.md5(open(save_config_path, 'rb').read(
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load dataloaders for task
-trainloader, valloader, testloader, train_dataset, val_dataset, test_dataset, df = get_face_dataloaders(
+train_loader, val_loader, test_loader, train_dataset, val_dataset, test_dataset, df = get_face_dataloaders(
     data_dir='./data/face',
     batch_size=config['batch_size'],
     num_workers=4,
     task=config['task'],
     resize=config.get('resize', 224)  # Use the resize value from config, default to 224
 )
+
 print(f"Number of classes for task: {len(train_dataset.label_to_idx.keys())}")
 print(f"label_to_idx for task: {train_dataset.label_to_idx}")
 
@@ -203,15 +204,15 @@ best_acc_val_epoch = -1
 for epoch in range(config['epochs']):
     print(f"\nEpoch {epoch+1}/{config['epochs']}")
     
-    # train_loss, train_acc, val_loss, val_acc = train_epoch(model, trainloader, valloader, criterion, optimizer, device)
-    # test_loss, test_acc = evaluate(model, testloader, criterion, device)
+    # train_loss, train_acc, val_loss, val_acc = train_epoch(model, train_loader, val_loader, criterion, optimizer, device)
+    # test_loss, test_acc = evaluate(model, test_loader, criterion, device)
 
     model.train()
     running_loss = 0.0
     correct = 0
     total = 0
     
-    for inputs, labels in tqdm(iter(trainloader), desc="Training"):
+    for inputs, labels in tqdm(train_loader, desc="Training"):
         inputs, labels = inputs.to(device), labels.to(device)
         
         optimizer.zero_grad()
@@ -225,7 +226,7 @@ for epoch in range(config['epochs']):
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
     
-    train_loss = running_loss / len(trainloader)
+    train_loss = running_loss / len(train_loader)
     train_acc = 100. * correct / total
     
     # Validation phase
@@ -235,7 +236,7 @@ for epoch in range(config['epochs']):
     val_total = 0
     
     with torch.no_grad():
-        for inputs, labels in tqdm(valloader, desc="Validating"):
+        for inputs, labels in tqdm(val_loader, desc="Validating"):
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
             loss = criterion(outputs, labels)
@@ -245,7 +246,7 @@ for epoch in range(config['epochs']):
             val_total += labels.size(0)
             val_correct += predicted.eq(labels).sum().item()
     
-    val_loss = val_loss / len(valloader)
+    val_loss = val_loss / len(val_loader)
     val_acc = 100. * val_correct / val_total
     
 
@@ -255,7 +256,7 @@ for epoch in range(config['epochs']):
     total = 0
     
     with torch.no_grad():
-        for inputs, labels in tqdm(testloader, desc="Evaluating"):
+        for inputs, labels in tqdm(test_loader, desc="Evaluating"):
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs, return_att_map=False)
             loss = criterion(outputs, labels)
@@ -265,7 +266,7 @@ for epoch in range(config['epochs']):
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
     
-    test_loss = running_loss / len(testloader)
+    test_loss = running_loss / len(test_loader)
     test_acc = 100. * correct / total
     
     print(f"Epoch {epoch+1}/{config['epochs']} Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
@@ -391,6 +392,6 @@ print(f"Training completed. Best Test Acc: {best_acc:.2f}% at epoch {best_acc_ep
 #     plt.close(fig)
 
 # # Visualize attention maps for train and test loaders
-# visualize_attention_maps(model, trainloader)
-# visualize_attention_maps(model, testloader)
+# visualize_attention_maps(model, train_loader)
+# visualize_attention_maps(model, test_loader)
 sys.stdout.close()
