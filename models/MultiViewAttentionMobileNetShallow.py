@@ -149,21 +149,18 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         print(f"Unfreezed {len(self.not_trained_models)} not trained models.")
     
     def freeze_fusion_layer(self):
-        # Freeze the fusion layer
-        for param in self.attention.parameters():
-            param.requires_grad = False
         for param in self.classifier.parameters():
             param.requires_grad = False
-        print("Fusion layer is frozen. [Attention and Classifier]")
+        for param in self.attention_weights:
+            param.requires_grad = False
+        # print("Fusion layer is frozen. [Attention Weights and Classifier]")
 
     def unfreeze_fusion_layer(self):
-        # Unfreeze the fusion layer
-        for param in self.attention.parameters():
-            param.requires_grad = True
         for param in self.classifier.parameters():
             param.requires_grad = True
-        print("Fusion layer is unfrozen. [Attention and Classifier]")
-        
+        for param in self.attention_weights:
+            param.requires_grad = True
+        # print("Fusion layer is unfrozen. [Attention Weights and Classifier]")
 
     def freeze_all(self):
         # Freeze all models and fusion layer
