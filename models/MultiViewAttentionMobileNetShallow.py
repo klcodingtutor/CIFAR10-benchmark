@@ -103,7 +103,8 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
             raise ValueError("No latent features extracted. Check your models.")
 
         # Stack all latent features into a tensor: (batch_size, num_features, feature_dim)
-        print(f"all_latents: {all_latents.shape}]")
+        print(f"all_latents: {len(all_latents)}]")
+        print(f"all_latents [0]: {all_latents[0].shape}]")
         latents = torch.stack(all_latents, dim=1)  # (batch_size, num_features, feature_dim)
         print(f"latents (After Stack).shape: {latents.shape}]")
         batch_size = latents.size(0)
