@@ -190,7 +190,8 @@ model = MultiViewAttentionMobileNetShallow(
     ],
     not_trained_models=[submodel],
     n_classes=num_classes,
-)
+).to(device)
+print(f"Model architecture: {model}")
 print(model)
 model.freeze_pretrained_models()
 model.unfreeze_not_trained_models()
