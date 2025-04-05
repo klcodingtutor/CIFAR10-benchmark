@@ -1,0 +1,12 @@
+model: AttentionMobileNetShallow_s_single_face
+model_family: AttentionMobileNetShallow_s
+dataset: face
+task: age_10
+epochs: 100
+batch_size: 64
+optimizer: adam
+lr: 0.001
+scheduler: null
+pretrained: false
+transfer_learning: false
+resize: 32
