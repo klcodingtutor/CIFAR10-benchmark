@@ -25,8 +25,8 @@ config = {
     "dataset": "face",
     "task": "disease",
     
-    "checkpoint_age": None,
-    "checkpoint_gender": None,
+    "checkpoint_age": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_age_10_noPretrained_noTransferLearning_val_best.pth",
+    "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
 
 
     "epochs": 100,
