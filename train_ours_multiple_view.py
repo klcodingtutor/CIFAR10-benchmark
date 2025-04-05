@@ -28,10 +28,12 @@ config = {
     "dataset": "face",
     "task": "disease",
     
-    "checkpoint_age": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_age_10_noPretrained_noTransferLearning_val_best.pth",
-    "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
+    "checkpoint_age": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_xs_128_single_face_face_age_10_noPretrained_noTransferLearning_val_best.pth",
+    "model_family_age": "AttentionMobileNetShallow_xs_128",
+    "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_xs_128_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
+    "model_family_gender": "AttentionMobileNetShallow_xs_128",
     "checkpoint_disease": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_disease_noPretrained_noTransferLearning_val_best.pth",
-
+    "model_family_disease": "AttentionMobileNetShallow_s",
 
     "epochs": 100,
     "batch_size": 64,
@@ -139,15 +141,24 @@ if config['model_family'] not in model_construc_func:
     raise ValueError(f"Unsupported model family: {config['model_family']}")
 
 # add the decorator @print_args to the model constructor
-model_constructor_func_no_decorator = model_construc_func[config['model_family']]
+model_constructor_func_no_decorator_age = model_construc_func[config['model_family_age']]
+model_constructor_func_no_decorator_gender = model_construc_func[config['model_family_gender']]
+model_constructor_func_no_decorator_disease = model_construc_func[config['model_family_disease']]
+
 
 @print_args
-def model_constructor_func(*args, **kwargs):
-    return model_constructor_func_no_decorator(*args, **kwargs)
+def model_constructor_func_age(*args, **kwargs):
+    return model_constructor_func_no_decorator_age(*args, **kwargs)
+@print_args
+def model_constructor_func_gender(*args, **kwargs):
+    return model_constructor_func_no_decorator_gender(*args, **kwargs)
+@print_args
+def model_constructor_func_disease(*args, **kwargs):
+    return model_constructor_func_no_decorator_disease(*args, **kwargs)
 
 
 # Initialize the model using MultiViewAttentionCNN
-submodel_disease = model_constructor_func(
+submodel_disease = model_constructor_func_no_decorator_disease(
     input_channels=3,
      n_classes=num_classes,
      input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
@@ -156,7 +167,7 @@ submodel_disease = model_constructor_func(
      ).to(device)
 print(submodel_disease)
 
-submodel_age = model_constructor_func(
+submodel_age = model_constructor_func_no_decorator_age(
     input_channels=3,
     n_classes=num_classes_age,
     input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
@@ -165,7 +176,7 @@ submodel_age = model_constructor_func(
     ).to(device)
 print(submodel_age)
 
-submodel_gender = model_constructor_func(
+submodel_gender = model_constructor_func_no_decorator_gender(
     input_channels=3,
     n_classes=num_classes_gender,
     input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
