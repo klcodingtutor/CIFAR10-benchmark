@@ -248,9 +248,14 @@ def visualize_attention_maps(model, dataloader):
         axes[i, 3].imshow(x_att_cur_meaned_channels, cmap='hot', interpolation='nearest', alpha=1)
         axes[i, 3].set_title("Attention Output (Mean over channels)")
         axes[i, 3].axis('off')
+    
         
     plt.tight_layout()
-    plt.show()
+    save_path = f"./output_image/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_attention_map_{i}.png"
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    plt.savefig(save_path)
+    print(f"Saved attention map to {save_path}")
+    plt.close(fig)
 
 # Visualize attention maps for train and test loaders
 visualize_attention_maps(model, trainloader)
