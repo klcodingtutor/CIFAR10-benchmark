@@ -74,14 +74,14 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         not_trained_att_maps = []
 
         for model in self.pretrained_models:
-            x = x_input.clone()
+            x = x_input.clone().to(device)
             #  x, att_map, x_att, latent= model(x, return_att_map=True, return_latent=True)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
             pretrained_latents.append(latent)
             pretrained_att_maps.append(att_map)
         
         for model in self.not_trained_models:
-            x = x_input.clone()
+            x = x_input.clone().to(device)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
             not_trained_latents.append(latent)
             not_trained_att_maps.append(att_map)
@@ -94,7 +94,7 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         not_trained_att_maps = torch.cat(not_trained_att_maps, dim=1)
 
         # Concatenate the latent features
-        latent = torch.cat((pretrained_latents, not_trained_latents), dim=1)
+        latent = torch.cat((pretrained_latents, not_trained_latents), dim=1).to(device)
         # Pass the concatenated latent features through the fusion layer
         x = self.fusion_layer(latent)
         if return_att_map:
