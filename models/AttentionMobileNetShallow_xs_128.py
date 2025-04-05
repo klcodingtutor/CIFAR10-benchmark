@@ -70,7 +70,7 @@ class AttentionMobileNetShallow_xs_128(nn.Module):
                 # conv_depth_wise(256, 256, 2),
                 # conv_depth_wise(512, 512, 1), # Reducing the number of depthwise convolutions to speed up the model
                 # conv_depth_wise(512, 512, 1), # Reducing the number of depthwise convolutions to speed up the model
-                conv_depth_wise(256, 128, 1),
+                conv_depth_wise(256, 128, 2),
                 nn.AdaptiveAvgPool2d(1)
             )
         else:
@@ -99,7 +99,7 @@ class AttentionMobileNetShallow_xs_128(nn.Module):
         
         x = self.model(x)
         
-        x = x.view(-1, 1024)
+        x = x.view(-1, 128)
         # copy x to latent
         if return_latent:
             latent = x.clone()
