@@ -57,9 +57,13 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         # Get the feature dimension from the first pretrained model
         feature_dim = pretrained_models[0].fc.in_features
         num_features = len(pretrained_models) + len(not_trained_models)  # Total number of feature sources
-
-        # Define N learnable weights (one per feature source)
-        self.attention_weights = nn.Parameter(torch.ones(num_features))  # Initialized to 1s
+        
+        # Define a small network to compute input-dependent weights
+        self.weight_generator = nn.Sequential(
+            nn.Linear(feature_dim, feature_dim // 16),  # Reduce dimension
+            nn.ReLU(),
+            nn.Linear(feature_dim // 16, num_features),  # Output N weights
+        )        
         
         # Final classification layer
         self.classifier = nn.Sequential(
@@ -101,16 +105,21 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
 
         # Stack latents: (batch_size, num_features, feature_dim)
         latents = torch.stack(all_latents, dim=1)  # (batch_size, num_features, feature_dim)
+        batch_size = latents.size(0)
 
-        # Apply learnable weights
-        attn_weights = F.softmax(self.attention_weights, dim=0)  # Normalize weights to sum to 1
-        attn_weights = attn_weights.view(1, self.num_features, 1)  # (1, num_features, 1) for broadcasting
+        # Compute input-dependent weights
+        global_descriptor = latents.mean(dim=1)  # (batch_size, feature_dim) - average across features
+        attn_weights = self.weight_generator(global_descriptor)  # (batch_size, num_features)
+        attn_weights = F.softmax(attn_weights, dim=1)  # Normalize weights per input
+        attn_weights = attn_weights.unsqueeze(-1)  # (batch_size, num_features, 1)
 
         # Weighted fusion
         fused_latent = (latents * attn_weights).sum(dim=1)  # (batch_size, feature_dim)
 
         # Final classification
         x = self.classifier(fused_latent)
+
+
 
 
         
@@ -149,18 +158,21 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         print(f"Unfreezed {len(self.not_trained_models)} not trained models.")
     
     def freeze_fusion_layer(self):
+        # Freeze the fusion layer
+        for param in self.weight_generator.parameters():
+            param.requires_grad = False
         for param in self.classifier.parameters():
             param.requires_grad = False
-        for param in self.attention_weights:
-            param.requires_grad = False
-        # print("Fusion layer is frozen. [Attention Weights and Classifier]")
+        print("Fusion layer is frozen.")
 
     def unfreeze_fusion_layer(self):
+        # Unfreeze the fusion layer
+        for param in self.weight_generator.parameters():
+            param.requires_grad = True
         for param in self.classifier.parameters():
             param.requires_grad = True
-        for param in self.attention_weights:
-            param.requires_grad = True
-        # print("Fusion layer is unfrozen. [Attention Weights and Classifier]")
+        print("Fusion layer is unfrozen.")
+        
 
     def freeze_all(self):
         # Freeze all models and fusion layer
