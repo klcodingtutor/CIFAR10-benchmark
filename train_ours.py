@@ -1,4 +1,4 @@
-from models.AttentionMobileNetShallow_xs import AttentionMobileNetShallow_xs
+from models.AttentionMobileNetShallow import AttentionMobileNetShallow
 import os
 import torch
 import torch.nn as nn
@@ -16,20 +16,29 @@ import logging
 
 
 # Hard-coded configuration
-config = {
-    "model": "AttentionMobileNetShallow_xs_single_face",
-    "model_family": "AttentionMobileNetShallow_xs",
-    "dataset": "face",
-    "task": "gender",
-    "epochs": 100,
-    "batch_size": 64,
-    "optimizer": "adam",
-    "lr": 0.001,
-    "scheduler": None,
-    "pretrained": False,
-    "transfer_learning": False,
-    "resize": 32
-}
+# config = {
+#     "model": "AttentionMobileNetShallow_single_face",
+#     "model_family": "AttentionMobileNetShallow",
+#     "dataset": "face",
+#     "task": "gender",
+#     "epochs": 100,
+#     "batch_size": 64,
+#     "optimizer": "adam",
+#     "lr": 0.001,
+#     "scheduler": None,
+#     "pretrained": False,
+#     "transfer_learning": False,
+#     "resize": 32
+# }
+
+# argparse
+parser = ArgumentParser(description="Train a model with specified configuration.")
+parser.add_argument('--config', type=str, required=True, help='Path to the configuration file (YAML or JSON).')
+
+load_config = load_config(parser.parse_args().config)
+# Load configuration
+config = load_config['config']
+print(f"Loaded configuration: {config}")
 
 # Set up logging to a file
 log_file = f"./checkpoints/{config['model']}_{config['dataset']}_{config['task']}_{'pretrained'if config['pretrained'] else 'noPretrained'}_{'transferLearning' if config['transfer_learning'] else 'noTransferLearning'}_training.log"
@@ -86,7 +95,7 @@ print(f"label_to_idx for task: {train_dataset.label_to_idx}")
 num_classes = len(train_dataset.label_to_idx.keys())
 
 # Initialize the model using MultiViewAttentionCNN
-model = AttentionMobileNetShallow_xs(
+model = AttentionMobileNetShallow(
     input_channels=3,
      n_classes=num_classes,
      input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
