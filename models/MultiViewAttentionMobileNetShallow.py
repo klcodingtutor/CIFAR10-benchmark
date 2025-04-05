@@ -59,6 +59,8 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         pretrained_output_size = sum(model.fc.in_features for model in pretrained_models)
         not_trained_output_size = sum(model.fc.in_features for model in not_trained_models)
         self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
+        import math
+        nn.init.kaiming_uniform_(self.fusion_layer.weight, a=math.sqrt(5))
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
