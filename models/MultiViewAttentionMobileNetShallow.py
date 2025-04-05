@@ -94,7 +94,19 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
                 not_trained_att_maps = torch.cat((not_trained_att_maps, att_map), dim=1)
         
         # Concatenate the latent features
-        latent = torch.cat((pretrained_latents, not_trained_latents), dim=1).to(device)
+        # both exsit
+        if pretrained_latents is not None and not_trained_latents is not None:
+            latent = torch.cat((pretrained_latents, not_trained_latents), dim=1).to(device)
+        # only pretrained exist
+        elif pretrained_latents is not None:
+            latent = pretrained_latents.to(device)
+        # only not trained exist
+        elif not_trained_latents is not None:
+            latent = not_trained_latents.to(device)
+        # neither exist
+        else:
+            raise ValueError("Both pretrained_latents and not_trained_latents are None. Check your models.")
+        
         # Pass the concatenated latent features through the fusion layer
         x = self.fusion_layer(latent)
         if return_att_map:
