@@ -86,7 +86,7 @@ class AttentionMobileNetShallow_s(nn.Module):
         att_out, att_map = self.mha(x_att, x_att, x_att)
         return att_out.transpose(1, 2).reshape(bs, c, h, w), att_map
 
-    def forward(self, x, return_att_map=False):
+    def forward(self, x, return_att_map=False, return_latent=False):
         if self.use_attention:
             x = self.att_conv(x)
             # x = self.apply_attention(x)
@@ -100,9 +100,20 @@ class AttentionMobileNetShallow_s(nn.Module):
         x = self.model(x)
         
         x = x.view(-1, 1024)
+        # copy x to latent
+        if return_latent:
+            latent = x.clone()
         x = self.fc(x)
 
         if return_att_map:
-            return x, att_map, x_att
+            if return_latent:
+                return x, att_map, x_att, latent
+            else:
+                return x, att_map, x_att
         else:
-            return x
+            if return_latent:
+                return x, latent
+            else:
+                return x
+
+
