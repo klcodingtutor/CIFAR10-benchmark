@@ -90,21 +90,22 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         
         # Addition the latent features
         # both exsit
-        if pretrained_latents is not None and not_trained_latents is not None:
+        if pretrained_latents != [] and not_trained_latents != []:
             # summation over all
             pretrained_latents = torch.stack(pretrained_latents, dim=0).sum(dim=0)
             not_trained_latents = torch.stack(not_trained_latents, dim=0).sum(dim=0)
             latent = pretrained_latents + not_trained_latents
         # only pretrained exist
-        elif pretrained_latents is not None:
+        elif pretrained_latents != [] and not_trained_latents == []:
             pretrained_latents = torch.stack(pretrained_latents, dim=0).sum(dim=0)
             latent = pretrained_latents
         # only not trained exist
-        elif not_trained_latents is not None:
+        elif pretrained_latents == [] and not_trained_latents != []:
             not_trained_latents = torch.stack(not_trained_latents, dim=0).sum(dim=0)
             latent = not_trained_latents
         # neither exist
         else:
+            # If both pretrained_latents and not_trained_latents are empty, raise an error
             raise ValueError("Both pretrained_latents and not_trained_latents are None. Check your models.")
         
         # Pass the concatenated latent features through the fusion layer
