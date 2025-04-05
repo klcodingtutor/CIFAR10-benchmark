@@ -79,22 +79,14 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         for i, model in enumerate(self.pretrained_models):
             x = x_input.clone().to(device)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
-            if i == 0:
-                pretrained_latents = latent
-                pretrained_att_maps = att_map
-            else:
-                pretrained_latents.append(latent)
-                pretrained_att_maps.append(att_map)
-        
+            pretrained_latents.append(latent)
+            pretrained_att_maps.append(att_map)
+    
         for i, model in enumerate(self.not_trained_models):
             x = x_input.clone().to(device)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
-            if i == 0:
-                not_trained_latents.append(latent)
-                not_trained_att_maps.append(att_map)
-            else:
-                not_trained_latents.append(latent)
-                not_trained_att_maps.append(att_map)
+            not_trained_latents.append(latent)
+            not_trained_att_maps.append(att_map)
         
         # Addition the latent features
         # both exsit
