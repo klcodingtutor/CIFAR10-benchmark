@@ -168,7 +168,7 @@ model = MultiViewAttentionMobileNetShallow(
     not_trained_models=[submodel],
     n_classes=num_classes,
 )
-
+print(model)
 model.freeze_pretrained_models()
 model.unfreeze_not_trained_models()
 model.unfreeze_fusion_layer()
