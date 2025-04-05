@@ -188,17 +188,20 @@ submodel_gender = model_constructor_func_no_decorator_gender(
 print(submodel_gender)
 
 # Load checkpoint [only when exist]
-if config['checkpoint_age'] != "":
+if config.get('checkpoint_age', "") != "":
+    # Load the checkpoint for age
     print(f"Loading checkpoint from {config['checkpoint_age']}")
     submodel_age, loaded_config_age = load_checkpoint(submodel_age, config['checkpoint_age'], device)
     print(f"Loaded checkpoint config: {loaded_config_age}")
 
-if config['checkpoint_gender'] != "":
+if config.get('checkpoint_gender', "") != "":
+    # Load the checkpoint for gender
     print(f"Loading checkpoint from {config['checkpoint_gender']}")
     submodel_gender, loaded_config_gender = load_checkpoint(submodel_gender, config['checkpoint_gender'], device)
     print(f"Loaded checkpoint config: {loaded_config_gender}")
 
-if config['checkpoint_disease'] != "":
+if config.get('checkpoint_disease', "") != "":
+    # Load the checkpoint for disease
     print(f"Loading checkpoint from {config['checkpoint_disease']}")
     submodel_disease, loaded_config_disease = load_checkpoint(submodel_disease, config['checkpoint_disease'], device)
     print(f"Loaded checkpoint config: {loaded_config_disease}")
