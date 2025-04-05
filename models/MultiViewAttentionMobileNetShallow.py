@@ -64,12 +64,17 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
             nn.ReLU(),
             nn.Linear(feature_dim, num_features),  # Compute attention scores
         )
-        
+        # Initialize the fusion layer weights
+        nn.init.xavier_uniform_(self.fusion_layer[0].weight)
+        nn.init.xavier_uniform_(self.fusion_layer[2].weight)
+
         # Final classification layer
         self.classifier = nn.Sequential(
             nn.ReLU(),
             nn.Linear(feature_dim, n_classes),
         )
+        # Initialize the classifier weights
+        nn.init.xavier_uniform_(self.classifier[1].weight)
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
