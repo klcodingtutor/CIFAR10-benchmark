@@ -48,72 +48,84 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         unfreeze_all():
             Unfreezes the parameters of all models and the fusion layer.
     '''
-
     def __init__(self, pretrained_models, not_trained_models, n_classes):
         super(MultiViewAttentionMobileNetShallow, self).__init__()
         self.pretrained_models = pretrained_models
         self.not_trained_models = not_trained_models
         self.n_classes = n_classes
 
-        # Use feature addition for the fusion layer
-        pretrained_output_size = pretrained_models[0].fc.in_features
-        self.fusion_layer = nn.Sequential(
+        # Get the feature dimension from the first pretrained model
+        feature_dim = pretrained_models[0].fc.in_features
+        num_features = len(pretrained_models) + len(not_trained_models)  # Total number of feature sources
+
+        # Define the attention-based fusion layer
+        self.fusion = nn.Sequential(
+            nn.Linear(feature_dim * num_features, feature_dim),  # Project concatenated features
             nn.ReLU(),
-            nn.Linear(pretrained_output_size, n_classes),
+            nn.Linear(feature_dim, num_features),  # Compute attention scores
         )
         
+        # Final classification layer
+        self.classifier = nn.Sequential(
+            nn.ReLU(),
+            nn.Linear(feature_dim, n_classes),
+        )
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
-        # Move the input tensor to the specified device
         x = x.to(device)
-        # Clone the input tensor to avoid modifying it during the forward pass
         x_input = x.clone()
-        # Initialize tensors for latent features and attention maps
+
+        # Initialize lists for latent features and attention maps
         pretrained_latents = []
         not_trained_latents = []
         pretrained_att_maps = []
         not_trained_att_maps = []
 
+        # Extract features from pretrained models
         for i, model in enumerate(self.pretrained_models):
             x = x_input.clone().to(device)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
             pretrained_latents.append(latent)
             pretrained_att_maps.append(att_map)
     
+        # Extract features from not-trained models
         for i, model in enumerate(self.not_trained_models):
             x = x_input.clone().to(device)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
             not_trained_latents.append(latent)
             not_trained_att_maps.append(att_map)
-        
-        # Addition the latent features
-        # both exsit
-        if pretrained_latents != [] and not_trained_latents != []:
-            # summation over all
-            pretrained_latents = torch.stack(pretrained_latents, dim=0).sum(dim=0)
-            not_trained_latents = torch.stack(not_trained_latents, dim=0).sum(dim=0)
-            latent = pretrained_latents + not_trained_latents
-        # only pretrained exist
-        elif pretrained_latents != [] and not_trained_latents == []:
-            pretrained_latents = torch.stack(pretrained_latents, dim=0).sum(dim=0)
-            latent = pretrained_latents
-        # only not trained exist
-        elif pretrained_latents == [] and not_trained_latents != []:
-            not_trained_latents = torch.stack(not_trained_latents, dim=0).sum(dim=0)
-            latent = not_trained_latents
-        # neither exist
-        else:
-            # If both pretrained_latents and not_trained_latents are empty, raise an error
-            raise ValueError("Both pretrained_latents and not_trained_latents are None. Check your models.")
-        
-        # Pass the concatenated latent features through the fusion layer
-        x = self.fusion_layer(latent)
+
+        # Combine all latent features
+        all_latents = pretrained_latents + not_trained_latents
+        if not all_latents:
+            raise ValueError("No latent features extracted. Check your models.")
+
+        # Stack all latent features into a tensor: (batch_size, num_features, feature_dim)
+        print(f"latents.shape: {latents}]")
+        latents = torch.stack(all_latents, dim=1)  # (batch_size, num_features, feature_dim)
+        print(f"latents (After Stack).shape: {latents}]")
+        batch_size = latents.size(0)
+
+        # Attention-based fusion
+        flat_latents = latents.view(batch_size, -1)  # (batch_size, num_features * feature_dim)
+        print(f"flat_latents.shape: {flat_latents}]")
+        attn_scores = self.fusion(flat_latents)  # (batch_size, num_features)
+        print(f"attn_scores.shape: {attn_scores}]")
+        attn_weights = F.softmax(attn_scores, dim=1).unsqueeze(-1)  # (batch_size, num_features, 1)
+        print(f"attn_weights.shape: {attn_weights}]")
+        fused_latent = (latents * attn_weights).sum(dim=1)  # (batch_size, feature_dim)
+        print(f"fused_latent.shape: {fused_latent}]")
+
+        # Final classification
+        x = self.classifier(fused_latent)
+
         if return_att_map:
-            return x, pretrained_att_maps.to(device), not_trained_att_maps.to(device)
+            return x, pretrained_att_maps, not_trained_att_maps
         else:
             return x
+
 
     def freeze_pretrained_models(self):
         # Freeze the pretrained models
