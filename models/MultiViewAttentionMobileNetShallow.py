@@ -103,20 +103,20 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
             raise ValueError("No latent features extracted. Check your models.")
 
         # Stack all latent features into a tensor: (batch_size, num_features, feature_dim)
-        print(f"latents.shape: {latents}]")
+        print(f"all_latents: {all_latents.shape}]")
         latents = torch.stack(all_latents, dim=1)  # (batch_size, num_features, feature_dim)
-        print(f"latents (After Stack).shape: {latents}]")
+        print(f"latents (After Stack).shape: {latents.shape}]")
         batch_size = latents.size(0)
 
         # Attention-based fusion
         flat_latents = latents.view(batch_size, -1)  # (batch_size, num_features * feature_dim)
-        print(f"flat_latents.shape: {flat_latents}]")
+        print(f"flat_latents.shape: {flat_latents.shape}]")
         attn_scores = self.fusion_layer(flat_latents)  # (batch_size, num_features)
-        print(f"attn_scores.shape: {attn_scores}]")
+        print(f"attn_scores.shape: {attn_scores.shape}]")
         attn_weights = F.softmax(attn_scores, dim=1).unsqueeze(-1)  # (batch_size, num_features, 1)
-        print(f"attn_weights.shape: {attn_weights}]")
+        print(f"attn_weights.shape: {attn_weights.shape}]")
         fused_latent = (latents * attn_weights).sum(dim=1)  # (batch_size, feature_dim)
-        print(f"fused_latent.shape: {fused_latent}]")
+        print(f"fused_latent.shape: {fused_latent.shape}]")
 
         # Final classification
         x = self.classifier(fused_latent)
