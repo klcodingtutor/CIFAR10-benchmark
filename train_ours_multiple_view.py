@@ -89,6 +89,8 @@ trainloader, valloader, testloader, train_dataset, val_dataset, test_dataset, df
     task=config['task'],
     resize=config.get('resize', 224)  # Use the resize value from config, default to 224
 )
+trainloader, valloader, testloader = iter(trainloader), iter(valloader), iter(testloader)
+
 print(f"Number of classes for task: {len(train_dataset.label_to_idx.keys())}")
 print(f"label_to_idx for task: {train_dataset.label_to_idx}")
 
