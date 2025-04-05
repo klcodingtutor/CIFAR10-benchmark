@@ -1,4 +1,6 @@
 from models.AttentionMobileNetShallow import AttentionMobileNetShallow
+from models.AttentionMobileNetShallow_s import AttentionMobileNetShallow_s
+from models.AttentionMobileNetShallow_xs import AttentionMobileNetShallow_xs
 import os
 import torch
 import torch.nn as nn
@@ -12,6 +14,7 @@ import sys
 from models import get_model
 import json
 import logging
+from utils.decorator import print_args
 
 
 
@@ -94,14 +97,42 @@ print(f"label_to_idx for task: {train_dataset.label_to_idx}")
 num_classes = len(train_dataset.label_to_idx.keys())
 
 # Initialize the model using MultiViewAttentionCNN
-model = AttentionMobileNetShallow(
+# model = AttentionMobileNetShallow(
+#     input_channels=3,
+#      n_classes=num_classes,
+#      input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
+#      use_attention=True,
+#      attention_channels=16
+#      ).to(device)
+# print(model)
+
+
+model_construc_func = {
+    "AttentionMobileNetShallow": AttentionMobileNetShallow,
+    "AttentionMobileNetShallow_s": AttentionMobileNetShallow_s,
+    "AttentionMobileNetShallow_xs": AttentionMobileNetShallow_xs
+}
+
+# check if model_family is in the model_construc_func
+if config['model_family'] not in model_construc_func:
+    raise ValueError(f"Unsupported model family: {config['model_family']}")
+
+# add the decorator @print_args to the model constructor
+model_constructor_func_no_decorator = model_construc_func[config['model_family']]
+
+@print_args
+def model_constructor_func(*args, **kwargs):
+    return model_constructor_func_no_decorator(*args, **kwargs)
+
+
+# Initialize the model using the specified model family
+model = model_construc_func[config['model_family']](
     input_channels=3,
-     n_classes=num_classes,
-     input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
-     use_attention=True,
-     attention_channels=16
-     ).to(device)
-print(model)
+    n_classes=num_classes,
+    input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
+    use_attention=True,
+    attention_channels=16
+).to(device)
 
 # Load checkpoint if provided from config
 if config.get('checkpoint'):
