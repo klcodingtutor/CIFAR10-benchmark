@@ -58,26 +58,14 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         feature_dim = pretrained_models[0].fc.in_features
         num_features = len(pretrained_models) + len(not_trained_models)  # Total number of feature sources
 
-        # Lightweight attention: Squeeze-and-Excitation style
-        reduction = 16  # Reduction factor to reduce parameters
-        self.attention = nn.Sequential(
-            nn.Linear(feature_dim, feature_dim // reduction),  # Squeeze
-            nn.ReLU(),
-            nn.Linear(feature_dim // reduction, num_features),  # Excitation (one weight per feature)
-            nn.Sigmoid()  # Output weights between 0 and 1
-        )
-        # Initialize the attention weights with Kaiming uniform distribution
-        nn.init.kaiming_uniform_(self.attention[0].weight, nonlinearity='relu')
-        nn.init.kaiming_uniform_(self.attention[2].weight, nonlinearity='sigmoid')
-
+        # Define N learnable weights (one per feature source)
+        self.attention_weights = nn.Parameter(torch.ones(num_features))  # Initialized to 1s
+        
         # Final classification layer
         self.classifier = nn.Sequential(
             nn.ReLU(),
             nn.Linear(feature_dim, n_classes),
         )
-        
-        # Initialize the classifier weights
-        nn.init.kaiming_uniform_(self.classifier[1].weight, nonlinearity='relu')
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
@@ -110,20 +98,22 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         if not all_latents:
             raise ValueError("No latent features extracted. Check your models.")
 
+
         # Stack latents: (batch_size, num_features, feature_dim)
         latents = torch.stack(all_latents, dim=1)  # (batch_size, num_features, feature_dim)
-        batch_size = latents.size(0)
 
-        # Compute a global descriptor for attention
-        global_descriptor = latents.mean(dim=1)  # (batch_size, feature_dim) - average across features
-        attn_weights = self.attention(global_descriptor)  # (batch_size, num_features)
-        attn_weights = attn_weights.unsqueeze(-1)  # (batch_size, num_features, 1)
+        # Apply learnable weights
+        attn_weights = F.softmax(self.attention_weights, dim=0)  # Normalize weights to sum to 1
+        attn_weights = attn_weights.view(1, self.num_features, 1)  # (1, num_features, 1) for broadcasting
 
-        # Apply attention weights and fuse
+        # Weighted fusion
         fused_latent = (latents * attn_weights).sum(dim=1)  # (batch_size, feature_dim)
 
         # Final classification
         x = self.classifier(fused_latent)
+
+
+        
         if return_att_map:
             return x, pretrained_att_maps, not_trained_att_maps
         else:
