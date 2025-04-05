@@ -116,6 +116,7 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         print(f"attn_scores.shape: {attn_scores.shape}]")
         attn_weights = F.softmax(attn_scores, dim=1).unsqueeze(-1)  # (batch_size, num_features, 1)
         print(f"attn_weights.shape: {attn_weights.shape}]")
+        print(f"attn_weights: {attn_weights}]")
         fused_latent = (latents * attn_weights).sum(dim=1)  # (batch_size, feature_dim)
         print(f"fused_latent.shape: {fused_latent.shape}]")
 
