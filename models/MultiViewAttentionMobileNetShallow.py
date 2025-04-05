@@ -55,8 +55,10 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         self.not_trained_models = not_trained_models
         self.n_classes = n_classes
 
-        # Fusion layer
-        self.fusion_layer = nn.Linear(len(pretrained_models) * 1024 + len(not_trained_models) * 1024, n_classes)
+        # Fusion layer, get from each linear layer of the models
+        pretrained_output_size = sum(model.fc.in_features for model in pretrained_models)
+        not_trained_output_size = sum(model.fc.in_features for model in not_trained_models)
+        self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
 
     def forward(self, x, return_att_map=True):
         # Get the latent features from each model
