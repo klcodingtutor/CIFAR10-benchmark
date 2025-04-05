@@ -115,6 +115,7 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
 
         # Weighted fusion
         fused_latent = (latents * attn_weights).sum(dim=1)  # (batch_size, feature_dim)
+        fused_latent = not_trained_latents[0]
 
         # Final classification
         x = self.classifier(fused_latent)
