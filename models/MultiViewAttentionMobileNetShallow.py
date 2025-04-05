@@ -67,38 +67,38 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         x = x.to(device)
         # Clone the input tensor to avoid modifying it during the forward pass
         x_input = x.clone()
-        # Get the latent features from each model
-        pretrained_latents = []
-        not_trained_latents = []
-        pretrained_att_maps = []
-        not_trained_att_maps = []
+        # Initialize tensors for latent features and attention maps
+        pretrained_latents = None
+        not_trained_latents = None
+        pretrained_att_maps = None
+        not_trained_att_maps = None
 
-        for model in self.pretrained_models:
-            x = x_input.clone().to(device)
-            #  x, att_map, x_att, latent= model(x, return_att_map=True, return_latent=True)
-            x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
-            pretrained_latents.append(latent)
-            pretrained_att_maps.append(att_map)
-        
-        for model in self.not_trained_models:
+        for i, model in enumerate(self.pretrained_models):
             x = x_input.clone().to(device)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
-            not_trained_latents.append(latent)
-            not_trained_att_maps.append(att_map)
+            if i == 0:
+                pretrained_latents = latent
+                pretrained_att_maps = att_map
+            else:
+                pretrained_latents = torch.cat((pretrained_latents, latent), dim=1)
+                pretrained_att_maps = torch.cat((pretrained_att_maps, att_map), dim=1)
+        
+        for i, model in enumerate(self.not_trained_models):
+            x = x_input.clone().to(device)
+            x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
+            if i == 0:
+                not_trained_latents = latent
+                not_trained_att_maps = att_map
+            else:
+                not_trained_latents = torch.cat((not_trained_latents, latent), dim=1)
+                not_trained_att_maps = torch.cat((not_trained_att_maps, att_map), dim=1)
         
         # Concatenate the latent features
-        pretrained_latents = torch.cat(pretrained_latents, dim=1).to(device)
-        not_trained_latents = torch.cat(not_trained_latents, dim=1).to(device)
-        # Concatenate the attention maps
-        pretrained_att_maps = torch.cat(pretrained_att_maps, dim=1).to(device)
-        not_trained_att_maps = torch.cat(not_trained_att_maps, dim=1).to(device)
-
-        # Concatenate the latent features
-        latent = torch.cat((pretrained_latents, not_trained_latents), dim=1)
+        latent = torch.cat((pretrained_latents, not_trained_latents), dim=1).to(device)
         # Pass the concatenated latent features through the fusion layer
         x = self.fusion_layer(latent)
         if return_att_map:
-            return x, pretrained_att_maps, not_trained_att_maps
+            return x, pretrained_att_maps.to(device), not_trained_att_maps.to(device)
         else:
             return x
 
