@@ -1,0 +1,16 @@
+model: AttentionMobileNetShallow_xs_128_single_face
+model_family: AttentionMobileNetShallow_xs_128
+dataset: face
+task: disease
+epochs: 100
+batch_size: 64
+optimizer: adam
+lr: 0.001
+scheduler: null
+pretrained: false
+transfer_learning: false
+resize: 32
+
+
+mv "configs/ours/AttentionMobileNetShallow_xs_128_single_face_face_disease copy.yaml" "configs/ours/AttentionMobileNetShallow_xs_128_128_single_face_face_disease.yaml"
+mv  "configs/ours/AttentionMobileNetShallow_xs_128_single_face_face_gender copy.yaml"  "configs/ours/AttentionMobileNetShallow_xs_128_128_single_face_face_gender.yaml"
