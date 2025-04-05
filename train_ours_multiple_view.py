@@ -4,6 +4,7 @@ from models.AttentionMobileNetShallow_s import AttentionMobileNetShallow_s
 from models.AttentionMobileNetShallow_xs import AttentionMobileNetShallow_xs
 from models.AttentionMobileNetShallow_xs_128 import AttentionMobileNetShallow_xs_128
 from models.MultiViewAttentionMobileNetShallow import MultiViewAttentionMobileNetShallow
+from models.AttentionMobileNetShallow_s_shallow import AttentionMobileNetShallow_s_shallow
 
 import os
 import torch
@@ -24,8 +25,8 @@ from utils.decorator import print_args
 
 # Hard-coded configuration
 config = {
-    "model": "AttentionMobileNetShallow_s_multiview_face_complete_new__age_gender_128__disease_1024",
-    "model_family": "AttentionMobileNetShallow_s",
+    "model": "AttentionMobileNetShallow_s_shallow_multiview_face_complete_new__age_gender_128__disease_1024",
+    "model_family": "AttentionMobileNetShallow_s_shallow",
     "dataset": "face",
     "task": "disease",
     
@@ -33,8 +34,9 @@ config = {
     "model_family_age": "AttentionMobileNetShallow_xs_128",
     "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_xs_128_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
     "model_family_gender": "AttentionMobileNetShallow_xs_128",
-    "checkpoint_disease": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_disease_noPretrained_noTransferLearning_val_best.pth",
-    "model_family_disease": "AttentionMobileNetShallow_s",
+    
+    # "checkpoint_disease": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_shallow_single_face_face_disease_noPretrained_noTransferLearning_val_best.pth",
+    "model_family_disease": "AttentionMobileNetShallow_s_shallow",
 
     "epochs": 100,
     "batch_size": 64,
@@ -136,6 +138,7 @@ model_construc_func = {
     "AttentionMobileNetShallow_s": AttentionMobileNetShallow_s,
     "AttentionMobileNetShallow_xs": AttentionMobileNetShallow_xs,
     "AttentionMobileNetShallow_xs_128": AttentionMobileNetShallow_xs_128,
+    "AttentionMobileNetShallow_s_shallow": AttentionMobileNetShallow_s_shallow,
 }
 
 # check if model_family is in the model_construc_func
@@ -212,9 +215,8 @@ model = MultiViewAttentionMobileNetShallow(
     pretrained_models=[
         submodel_age,
         submodel_gender,
-        submodel_disease
     ],
-    not_trained_models=[],
+    not_trained_models=[submodel_disease],
     n_classes=num_classes,
 ).to(device)
 print(f"Model architecture: {model}")
