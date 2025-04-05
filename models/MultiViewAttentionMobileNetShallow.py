@@ -61,6 +61,7 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
 
     def forward(self, x, return_att_map=True):
+        x_input = x.clone()
         # Get the latent features from each model
         pretrained_latents = []
         not_trained_latents = []
@@ -68,12 +69,14 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         not_trained_att_maps = []
 
         for model in self.pretrained_models:
+            x = x_input.clone()
             #  x, att_map, x_att, latent= model(x, return_att_map=True, return_latent=True)
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
             pretrained_latents.append(latent)
             pretrained_att_maps.append(att_map)
         
         for model in self.not_trained_models:
+            x = x_input.clone()
             x, att_map, x_att, latent = model(x, return_att_map=True, return_latent=True)
             not_trained_latents.append(latent)
             not_trained_att_maps.append(att_map)
