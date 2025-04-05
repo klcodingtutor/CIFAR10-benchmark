@@ -60,7 +60,12 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         not_trained_output_size = sum(model.fc.in_features for model in not_trained_models)
         self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
 
-    def forward(self, x, return_att_map=True):
+    def forward(self, x, return_att_map=True, device=None):
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        # Move the input tensor to the specified device
+        x = x.to(device)
+        # Clone the input tensor to avoid modifying it during the forward pass
         x_input = x.clone()
         # Get the latent features from each model
         pretrained_latents = []
