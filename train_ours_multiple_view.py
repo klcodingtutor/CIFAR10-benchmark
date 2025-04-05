@@ -1,6 +1,6 @@
 from tqdm import tqdm
 from models.AttentionMobileNetShallow_s import AttentionMobileNetShallow_s
-from models.MultiViewAttentionMobileNetShallow_s import MultiViewAttentionMobileNetShallow_s
+from models.MultiViewAttentionMobileNetShallow import MultiViewAttentionMobileNetShallow
 
 import os
 import torch
@@ -161,7 +161,7 @@ print(f"Loaded checkpoint config: {loaded_config_gender}")
 
 
 
-model = MultiViewAttentionMobileNetShallow_s(
+model = MultiViewAttentionMobileNetShallow(
     pretrained_models=[
         submodel_age,
         submodel_gender
