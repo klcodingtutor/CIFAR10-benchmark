@@ -35,9 +35,8 @@ import logging
 parser = ArgumentParser(description="Train a model with specified configuration.")
 parser.add_argument('--config', type=str, required=True, help='Path to the configuration file (YAML or JSON).')
 
-load_config = load_config(parser.parse_args().config)
 # Load configuration
-config = load_config['config']
+config = load_config(parser.parse_args().config)
 print(f"Loaded configuration: {config}")
 
 # Set up logging to a file
