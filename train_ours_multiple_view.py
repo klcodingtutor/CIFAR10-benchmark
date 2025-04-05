@@ -1,4 +1,4 @@
-import tqdm
+from tqdm import tqdm
 from models.AttentionMobileNetShallow import AttentionMobileNetShallow
 from models.MultiViewAttentionMobileNetShallow import MultiViewAttentionMobileNetShallow
 
