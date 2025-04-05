@@ -1,6 +1,6 @@
 from tqdm import tqdm
-from models.AttentionMobileNetShallow import AttentionMobileNetShallow
-from models.MultiViewAttentionMobileNetShallow import MultiViewAttentionMobileNetShallow
+from models.AttentionMobileNetShallow_s import AttentionMobileNetShallow_s
+from models.MultiViewAttentionMobileNetShallow_s import MultiViewAttentionMobileNetShallow_s
 
 import os
 import torch
@@ -20,13 +20,13 @@ import logging
 
 # Hard-coded configuration
 config = {
-    "model": "AttentionMobileNetShallow_multiview_face",
-    "model_family": "AttentionMobileNetShallow",
+    "model": "AttentionMobileNetShallow_s_multiview_face",
+    "model_family": "AttentionMobileNetShallow_s",
     "dataset": "face",
     "task": "disease",
     
-    "checkpoint_age": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_age_10_noPretrained_noTransferLearning_val_best.pth",
-    "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
+    "checkpoint_age": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_s_single_face_face_age_10_noPretrained_noTransferLearning_val_best.pth",
+    "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_s_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
 
 
     "epochs": 100,
@@ -124,7 +124,7 @@ num_classes_gender = len(train_dataset_gender.label_to_idx.keys())
 
 
 # Initialize the model using MultiViewAttentionCNN
-submodel = AttentionMobileNetShallow(
+submodel = AttentionMobileNetShallow_s(
     input_channels=3,
      n_classes=num_classes,
      input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
@@ -133,7 +133,7 @@ submodel = AttentionMobileNetShallow(
      ).to(device)
 print(submodel)
 
-submodel_age = AttentionMobileNetShallow(
+submodel_age = AttentionMobileNetShallow_s(
     input_channels=3,
     n_classes=num_classes_age,
     input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
@@ -142,7 +142,7 @@ submodel_age = AttentionMobileNetShallow(
     ).to(device)
 print(submodel_age)
 
-submodel_gender = AttentionMobileNetShallow(
+submodel_gender = AttentionMobileNetShallow_s(
     input_channels=3,
     n_classes=num_classes_gender,
     input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
@@ -161,7 +161,7 @@ print(f"Loaded checkpoint config: {loaded_config_gender}")
 
 
 
-model = MultiViewAttentionMobileNetShallow(
+model = MultiViewAttentionMobileNetShallow_s(
     pretrained_models=[
         submodel_age,
         submodel_gender
