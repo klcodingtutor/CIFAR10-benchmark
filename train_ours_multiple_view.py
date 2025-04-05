@@ -18,6 +18,7 @@ from models import get_model
 import json
 import logging
 
+from utils.decorator import print_args
 
 
 # Hard-coded configuration
