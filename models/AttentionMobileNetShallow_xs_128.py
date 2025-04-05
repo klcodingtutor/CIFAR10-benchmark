@@ -67,10 +67,10 @@ class AttentionMobileNetShallow_xs_128(nn.Module):
                 conv_depth_wise(32, 64, 1),
                 conv_depth_wise(64, 128, 2),
                 conv_depth_wise(128, 256, 1),
-                conv_depth_wise(256, 256, 2),
+                # conv_depth_wise(256, 256, 2),
                 # conv_depth_wise(512, 512, 1), # Reducing the number of depthwise convolutions to speed up the model
                 # conv_depth_wise(512, 512, 1), # Reducing the number of depthwise convolutions to speed up the model
-                conv_depth_wise(256, 128, 2),
+                conv_depth_wise(256, 128, 1),
                 nn.AdaptiveAvgPool2d(1)
             )
         else:
