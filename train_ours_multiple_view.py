@@ -2,6 +2,7 @@ from tqdm import tqdm
 from models.AttentionMobileNetShallow import AttentionMobileNetShallow
 from models.AttentionMobileNetShallow_s import AttentionMobileNetShallow_s
 from models.AttentionMobileNetShallow_xs import AttentionMobileNetShallow_xs
+from models.AttentionMobileNetShallow_xs_128 import AttentionMobileNetShallow_xs_128
 from models.MultiViewAttentionMobileNetShallow import MultiViewAttentionMobileNetShallow
 
 import os
@@ -133,7 +134,8 @@ num_classes_gender = len(train_dataset_gender.label_to_idx.keys())
 model_construc_func = {
     "AttentionMobileNetShallow": AttentionMobileNetShallow,
     "AttentionMobileNetShallow_s": AttentionMobileNetShallow_s,
-    "AttentionMobileNetShallow_xs": AttentionMobileNetShallow_xs
+    "AttentionMobileNetShallow_xs": AttentionMobileNetShallow_xs,
+    "AttentionMobileNetShallow_xs_128": AttentionMobileNetShallow_xs_128,
 }
 
 # check if model_family is in the model_construc_func
