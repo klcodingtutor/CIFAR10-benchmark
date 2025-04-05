@@ -240,6 +240,8 @@ for epoch in range(config['epochs']):
         
         optimizer.zero_grad()
         outputs = model(inputs, return_att_map=False)
+        print(f"outputs shape: {outputs.shape}")
+        print(f"labels shape: {labels.shape}")
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
