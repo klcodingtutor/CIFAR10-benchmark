@@ -20,7 +20,7 @@ config = {
     "model": "AttentionMobileNetShallow_xs_single_face",
     "model_family": "AttentionMobileNetShallow_xs",
     "dataset": "face",
-    "task": "age_10",
+    "task": "gender",
     "epochs": 100,
     "batch_size": 64,
     "optimizer": "adam",
