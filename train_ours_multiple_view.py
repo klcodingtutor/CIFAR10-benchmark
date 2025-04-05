@@ -263,7 +263,9 @@ for epoch in range(config['epochs']):
     with torch.no_grad():
         for inputs, labels in tqdm(val_loader, desc="Validating"):
             inputs, labels = inputs.to(device), labels.to(device)
-            outputs = model(inputs)
+            outputs = model(inputs, return_att_map=False)
+            print(f"outputs shape: {outputs.shape}")
+            print(f"labels shape: {labels.shape}")
             loss = criterion(outputs, labels)
             
             val_loss += loss.item()
