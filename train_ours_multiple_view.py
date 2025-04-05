@@ -197,7 +197,7 @@ model = MultiViewAttentionMobileNetShallow(
 ).to(device)
 print(f"Model architecture: {model}")
 print(model)
-model.freeze_pretrained_models()
+model.freeze_all()
 model.unfreeze_not_trained_models()
 model.unfreeze_fusion_layer()
 
