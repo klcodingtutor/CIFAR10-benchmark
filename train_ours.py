@@ -1,4 +1,4 @@
-from models.AttentionMobileNetShallow import AttentionMobileNetShallow
+from models.AttentionMobileNetShallow_s import AttentionMobileNetShallow_s
 import os
 import torch
 import torch.nn as nn
@@ -17,8 +17,8 @@ import logging
 
 # Hard-coded configuration
 # config = {
-#     "model": "AttentionMobileNetShallow_single_face",
-#     "model_family": "AttentionMobileNetShallow",
+#     "model": "AttentionMobileNetShallow_s_single_face",
+#     "model_family": "AttentionMobileNetShallow_s",
 #     "dataset": "face",
 #     "task": "gender",
 #     "epochs": 100,
@@ -94,7 +94,7 @@ print(f"label_to_idx for task: {train_dataset.label_to_idx}")
 num_classes = len(train_dataset.label_to_idx.keys())
 
 # Initialize the model using MultiViewAttentionCNN
-model = AttentionMobileNetShallow(
+model = AttentionMobileNetShallow_s(
     input_channels=3,
      n_classes=num_classes,
      input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
