@@ -33,7 +33,7 @@ config = {
     "model_family_age": "AttentionMobileNetShallow_xs_128",
     "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_xs_128_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
     "model_family_gender": "AttentionMobileNetShallow_xs_128",
-    # "checkpoint_disease": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_disease_noPretrained_noTransferLearning_val_best.pth",
+    "checkpoint_disease": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_disease_noPretrained_noTransferLearning_val_best.pth",
     "model_family_disease": "AttentionMobileNetShallow_s",
 
     "epochs": 100,
@@ -212,9 +212,9 @@ model = MultiViewAttentionMobileNetShallow(
     pretrained_models=[
         submodel_age,
         submodel_gender,
-        
+        submodel_disease
     ],
-    not_trained_models=[submodel_disease],
+    not_trained_models=[],
     n_classes=num_classes,
 ).to(device)
 print(f"Model architecture: {model}")
