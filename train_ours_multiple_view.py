@@ -1,5 +1,7 @@
 from tqdm import tqdm
+from models.AttentionMobileNetShallow import AttentionMobileNetShallow
 from models.AttentionMobileNetShallow_s import AttentionMobileNetShallow_s
+from models.AttentionMobileNetShallow_xs import AttentionMobileNetShallow_xs
 from models.MultiViewAttentionMobileNetShallow import MultiViewAttentionMobileNetShallow
 
 import os
@@ -123,8 +125,27 @@ num_classes_age = len(train_dataset_age.label_to_idx.keys())
 num_classes_gender = len(train_dataset_gender.label_to_idx.keys())
 
 
+
+model_construc_func = {
+    "AttentionMobileNetShallow": AttentionMobileNetShallow,
+    "AttentionMobileNetShallow_s": AttentionMobileNetShallow_s,
+    "AttentionMobileNetShallow_xs": AttentionMobileNetShallow_xs
+}
+
+# check if model_family is in the model_construc_func
+if config['model_family'] not in model_construc_func:
+    raise ValueError(f"Unsupported model family: {config['model_family']}")
+
+# add the decorator @print_args to the model constructor
+model_constructor_func_no_decorator = model_construc_func[config['model_family']]
+
+@print_args
+def model_constructor_func(*args, **kwargs):
+    return model_constructor_func_no_decorator(*args, **kwargs)
+
+
 # Initialize the model using MultiViewAttentionCNN
-submodel = AttentionMobileNetShallow_s(
+submodel = model_constructor_func(
     input_channels=3,
      n_classes=num_classes,
      input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
@@ -133,7 +154,7 @@ submodel = AttentionMobileNetShallow_s(
      ).to(device)
 print(submodel)
 
-submodel_age = AttentionMobileNetShallow_s(
+submodel_age = model_constructor_func(
     input_channels=3,
     n_classes=num_classes_age,
     input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
@@ -142,7 +163,7 @@ submodel_age = AttentionMobileNetShallow_s(
     ).to(device)
 print(submodel_age)
 
-submodel_gender = AttentionMobileNetShallow_s(
+submodel_gender = model_constructor_func(
     input_channels=3,
     n_classes=num_classes_gender,
     input_size=config.get('resize', 224),  # Use the resize value from config, default to 224
