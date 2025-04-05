@@ -59,8 +59,20 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         pretrained_output_size = sum(model.fc.in_features for model in pretrained_models)
         not_trained_output_size = sum(model.fc.in_features for model in not_trained_models)
         self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
+        # now I need batch norm for each of the latent features from pretrained_output_size and not_trained_output_size
+        self.batch_norms_pretrained = nn.ModuleList()
+        self.batch_norms_not_trained = nn.ModuleList()
+        for model in pretrained_models:
+            self.batch_norms_pretrained.append(nn.BatchNorm1d(model.fc.in_features))
+        for model in not_trained_models:
+            self.batch_norms_not_trained.append(nn.BatchNorm1d(model.fc.in_features))
+        # Initialize the fusion layer weights
         import math
         nn.init.kaiming_uniform_(self.fusion_layer.weight, a=math.sqrt(5))
+        # if self.fusion_layer.bias is not None:
+        #     fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.fusion_layer.weight)
+        #     bound = 1 / math.sqrt(fan_in)
+        #     nn.init.uniform_(self.fusion_layer.bias, -bound, bound)
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
@@ -94,6 +106,20 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
             else:
                 not_trained_latents = torch.cat((not_trained_latents, latent), dim=1)
                 not_trained_att_maps = torch.cat((not_trained_att_maps, att_map), dim=1)
+        
+        # apply batch norm to the latent features
+        if pretrained_latents is not None:
+            for i, model in enumerate(self.pretrained_models):
+                pretrained_latents = self.batch_norms_pretrained[i](pretrained_latents)
+        if not_trained_latents is not None:
+            for i, model in enumerate(self.not_trained_models):
+                not_trained_latents = self.batch_norms_not_trained[i](not_trained_latents)
+        
+        # Apply ReLU activation to the latent features
+        if pretrained_latents is not None:
+            pretrained_latents = F.relu(pretrained_latents)
+        if not_trained_latents is not None:
+            not_trained_latents = F.relu(not_trained_latents)
         
         # Concatenate the latent features
         # both exsit
