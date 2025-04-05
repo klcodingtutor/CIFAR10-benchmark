@@ -32,7 +32,7 @@ config = {
     "model_family_age": "AttentionMobileNetShallow_xs_128",
     "checkpoint_gender": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_xs_128_single_face_face_gender_noPretrained_noTransferLearning_val_best.pth",
     "model_family_gender": "AttentionMobileNetShallow_xs_128",
-    "checkpoint_disease": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_disease_noPretrained_noTransferLearning_val_best.pth",
+    # "checkpoint_disease": "/content/CIFAR10-benchmark/checkpoints/AttentionMobileNetShallow_s_single_face_face_disease_noPretrained_noTransferLearning_val_best.pth",
     "model_family_disease": "AttentionMobileNetShallow_s",
 
     "epochs": 100,
@@ -185,15 +185,21 @@ submodel_gender = model_constructor_func_no_decorator_gender(
     ).to(device)
 print(submodel_gender)
 
-# Load checkpoint
-print(f"Loading checkpoint from {config['checkpoint_age']}")
-submodel_age, loaded_config_age = load_checkpoint(submodel_age, config['checkpoint_age'], device)
-print(f"Loaded checkpoint config: {loaded_config_age}")
-print(f"Loading checkpoint from {config['checkpoint_gender']}")
-submodel_gender, loaded_config_gender = load_checkpoint(submodel_gender, config['checkpoint_gender'], device)
-print(f"Loaded checkpoint config: {loaded_config_gender}")
-print(f"Loading checkpoint from {config['checkpoint_disease']}")
-submodel_disease, loaded_config_disease = load_checkpoint(submodel_disease, config['checkpoint_disease'], device)
+# Load checkpoint [only when exist]
+if config['checkpoint_age'] != "":
+    print(f"Loading checkpoint from {config['checkpoint_age']}")
+    submodel_age, loaded_config_age = load_checkpoint(submodel_age, config['checkpoint_age'], device)
+    print(f"Loaded checkpoint config: {loaded_config_age}")
+
+if config['checkpoint_gender'] != "":
+    print(f"Loading checkpoint from {config['checkpoint_gender']}")
+    submodel_gender, loaded_config_gender = load_checkpoint(submodel_gender, config['checkpoint_gender'], device)
+    print(f"Loaded checkpoint config: {loaded_config_gender}")
+
+if config['checkpoint_disease'] != "":
+    print(f"Loading checkpoint from {config['checkpoint_disease']}")
+    submodel_disease, loaded_config_disease = load_checkpoint(submodel_disease, config['checkpoint_disease'], device)
+    print(f"Loaded checkpoint config: {loaded_config_disease}")
 
 
 
@@ -201,9 +207,9 @@ model = MultiViewAttentionMobileNetShallow(
     pretrained_models=[
         submodel_age,
         submodel_gender,
-        submodel_disease
+        
     ],
-    not_trained_models=[],
+    not_trained_models=[submodel_disease],
     n_classes=num_classes,
 ).to(device)
 print(f"Model architecture: {model}")
