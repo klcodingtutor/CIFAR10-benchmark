@@ -23,7 +23,7 @@ from utils.decorator import print_args
 
 # Hard-coded configuration
 config = {
-    "model": "AttentionMobileNetShallow_s_multiview_face",
+    "model": "AttentionMobileNetShallow_s_multiview_face_complete_new__disable_multi",
     "model_family": "AttentionMobileNetShallow_s",
     "dataset": "face",
     "task": "disease",
