@@ -58,23 +58,26 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         feature_dim = pretrained_models[0].fc.in_features
         num_features = len(pretrained_models) + len(not_trained_models)  # Total number of feature sources
 
-        # Define the attention-based fusion layer
-        self.fusion_layer = nn.Sequential(
-            nn.Linear(feature_dim * num_features, feature_dim),  # Project concatenated features
+        # Lightweight attention: Squeeze-and-Excitation style
+        reduction = 16  # Reduction factor to reduce parameters
+        self.attention = nn.Sequential(
+            nn.Linear(feature_dim, feature_dim // reduction),  # Squeeze
             nn.ReLU(),
-            nn.Linear(feature_dim, num_features),  # Compute attention scores
+            nn.Linear(feature_dim // reduction, num_features),  # Excitation (one weight per feature)
+            nn.Sigmoid()  # Output weights between 0 and 1
         )
-        # Initialize the fusion layer weights
-        nn.init.xavier_uniform_(self.fusion_layer[0].weight)
-        nn.init.xavier_uniform_(self.fusion_layer[2].weight)
+        # Initialize the attention weights with Kaiming uniform distribution
+        nn.init.kaiming_uniform_(self.attention[0].weight, nonlinearity='relu')
+        nn.init.kaiming_uniform_(self.attention[2].weight, nonlinearity='sigmoid')
 
         # Final classification layer
         self.classifier = nn.Sequential(
             nn.ReLU(),
             nn.Linear(feature_dim, n_classes),
         )
+        
         # Initialize the classifier weights
-        nn.init.xavier_uniform_(self.classifier[1].weight)
+        nn.init.kaiming_uniform_(self.classifier[1].weight, nonlinearity='relu')
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
@@ -107,27 +110,20 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         if not all_latents:
             raise ValueError("No latent features extracted. Check your models.")
 
-        # Stack all latent features into a tensor: (batch_size, num_features, feature_dim)
-        print(f"all_latents: {len(all_latents)}]")
-        print(f"all_latents [0]: {all_latents[0].shape}]")
+        # Stack latents: (batch_size, num_features, feature_dim)
         latents = torch.stack(all_latents, dim=1)  # (batch_size, num_features, feature_dim)
-        print(f"latents (After Stack).shape: {latents.shape}]")
         batch_size = latents.size(0)
 
-        # Attention-based fusion
-        flat_latents = latents.view(batch_size, -1)  # (batch_size, num_features * feature_dim)
-        print(f"flat_latents.shape: {flat_latents.shape}]")
-        attn_scores = self.fusion_layer(flat_latents)  # (batch_size, num_features)
-        print(f"attn_scores.shape: {attn_scores.shape}]")
-        attn_weights = F.softmax(attn_scores, dim=1).unsqueeze(-1)  # (batch_size, num_features, 1)
-        print(f"attn_weights.shape: {attn_weights.shape}]")
-        print(f"attn_weights: {attn_weights}]")
+        # Compute a global descriptor for attention
+        global_descriptor = latents.mean(dim=1)  # (batch_size, feature_dim) - average across features
+        attn_weights = self.attention(global_descriptor)  # (batch_size, num_features)
+        attn_weights = attn_weights.unsqueeze(-1)  # (batch_size, num_features, 1)
+
+        # Apply attention weights and fuse
         fused_latent = (latents * attn_weights).sum(dim=1)  # (batch_size, feature_dim)
-        print(f"fused_latent.shape: {fused_latent.shape}]")
 
         # Final classification
         x = self.classifier(fused_latent)
-
         if return_att_map:
             return x, pretrained_att_maps, not_trained_att_maps
         else:
@@ -164,23 +160,20 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
     
     def freeze_fusion_layer(self):
         # Freeze the fusion layer
-        for param in self.fusion_layer.parameters():
+        for param in self.attention.parameters():
             param.requires_grad = False
-        print(f"Freezed fusion layer.")
-        # Freeze the classifier layer
         for param in self.classifier.parameters():
             param.requires_grad = False
-        print(f"Freezed classifier layer.")
+        print("Fusion layer is frozen. [Attention and Classifier]")
 
     def unfreeze_fusion_layer(self):
         # Unfreeze the fusion layer
-        for param in self.fusion_layer.parameters():
+        for param in self.attention.parameters():
             param.requires_grad = True
-        print(f"Unfreezed fusion layer.")
-        # Unfreeze the classifier layer
         for param in self.classifier.parameters():
             param.requires_grad = True
-        print(f"Unfreezed classifier layer.")
+        print("Fusion layer is unfrozen. [Attention and Classifier]")
+        
 
     def freeze_all(self):
         # Freeze all models and fusion layer
