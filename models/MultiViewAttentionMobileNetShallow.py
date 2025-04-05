@@ -58,7 +58,14 @@ class MultiViewAttentionMobileNetShallow(nn.Module):
         # Fusion layer, get from each linear layer of the models
         pretrained_output_size = sum(model.fc.in_features for model in pretrained_models)
         not_trained_output_size = sum(model.fc.in_features for model in not_trained_models)
-        self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
+        # self.fusion_layer = nn.Linear(pretrained_output_size + not_trained_output_size, n_classes)
+        self.fusion_layer = nn.Sequential(
+            nn.Linear(pretrained_output_size + not_trained_output_size, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, n_classes)
+        )
 
     def forward(self, x, return_att_map=True, device=None):
         if device is None:
